@@ -1,0 +1,83 @@
+852 entries in total
+
+801 contain the last edited alignments
+
+305 contain both summary and post-op last edited
+
+The surgical procedure can be broken into
+	robot      vs. no robot
+	makoplasty vs. no makoplasty
+	left 	   vs. right          vs. bilateral
+	revision   vs. no revision
+
+24 unique surgeon names: 
+	will there be new surgeons added to the list?
+
+Questions
+	Are the summaray images all done on the same knee?
+	Why are there some summary images with no corresponding last edited implant?
+	What do the four Femoral rotation degrees represent (Coronal, PCA TEA, Sagittal)? Photos for better understanding?
+	How can I tell if the results from the operation were successful?
+
+-----------------------------------
+In meeting
+
+All done on same knee
+
+Import errors, some have no summary screen
+
+Summary and planning screens are redundant - same thing
+
+Planning : PCA only, 
+
+
+Need all four angles to get a complete alignment of the knee.
+
+Flexion (femoral) and p.slope (tibial) sort of same
+
+LAST EDITED is the END
+
+AS-SCANNED correlates to pre-op
+
+Only pre-op alignment data and the resections
+
+
+ENDPOINT: dataset on the left - WHAT WE ENDED UP WITH
+
+PLANNED: what we WANT before surgery
+
+WHEN LAST EDITED NOT APPARENT, CAN USE SUMMARY
+
+FOCUS ON THE PRE-OP ONES, SUMMARY SCREEN
+
+---
+
+HOW WELL DID SURGERY GO??
+
+-------------
+9 types of morphology: all you need is MPTA and LDFA - THIS IS PREOP
+-------------
+
+-> where they ended up is LAST EDITED
+
+- ahka, jlo only for 356 cases -> preop CPAC
+- calculate ahka, jlo for 852 -> 
+
+ASSUMING THESE SURGEONS HAVE GENERALLY GOOD OUTCOMES, IS THERE A PATTERN IN HOW THEY MAKE THE RESECTIONS???
+
+EX: DON'T NEED TO GO XXmm OUTSIDE THE TIBIA IF AKHA IS LESS THAN xx
+
+Clustering: clusters of postop morphologies that share preop morphologies 
+
+- can we classify how morphologies change pre and post alignment?
+
+----
+Don't use as-scanned: use AV-BC, Q-W
+
+AHKA: use +- 1 for verus or valgus measurements
+JLO: use +- 2
+
+-: verus, +: valgus
+
+CPAC classification: read article
+
