@@ -12,3 +12,4 @@ HKA = 90 - TCO
 
 JLO: joint line obliquity, > 180 indicates apex proximal, < 180 indicates apex distal
 JLO = MPTA + LDFA
+JLO = 90 + FCO

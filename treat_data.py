@@ -9,26 +9,50 @@ import pandas as pd
 import sys
 
 df = pd.read_excel("raw/mako_data.xlsx", header=1)
+col_headers = list(df.columns)
 
 df.rename(columns={"HAS SUMMARY IMAGE (YES=1,NO=0)": "has_summary_image"}, inplace=True)
-df.rename(columns={"HAS LAST EDITED PLAN IMAGE (YES=1,NO=0)": "has_last_image"}, inplace=True)
+# df.rename(columns={"HAS LAST EDITED PLAN IMAGE (YES=1,NO=0)": "has_last_image"}, inplace=True)
 
-# preop       : dataframe where each entry has the preop image
-# preop_postop : dataframe where each entry has both preop and postop image
-summary = (df["has_summary_image"] == 1).copy().set_index(df.columns[0])
-last_only = ((df["has_last_image"] == 1 ) & (df["has_summary_image"] == 0)).copy().set_index(df.columns[0])
+summary = df[df["has_summary_image"] == 1].copy().set_index(df.columns[0])
+# last_only = df[(df["has_last_image"] == 1 ) & (df["has_summary_image"] == 0)]
 
-# drop the null columns from the preop only dataset
-col_names = list(df.columns)
-idx = col_names.index("has_postop_image")
-preop.drop(columns=col_names[idx:]+["has_postop_image"], axis=1, inplace=True)
+planned_headers = {'jlo': 'Femoral Rotation: Coronal (Varus = +, Valgus = -) (degrees)', 
+				   'hka' : 'Tibial Rotation: Coronal (Varus = +, Valgus = -) (degrees)'
+				}
+preop_headers = {'hka': 'Joint Line: aHKA (Varus = +, Valgus = -) (degrees)', 
+				 'jlo': 'Joint Line: JLO (degrees)'
+				}
 
-# drop the has_image label
-preop_postop.drop(columns=["has_preop_image", "has_postop_image"], axis=1, inplace=True)
+summary.dropna(axis='index', subset=list(preop_headers.values()) + list(planned_headers.values()), inplace=True) # drops rows without planned and postop hka, jlo
 
-print("\nPreop only Dataset: \n", preop)
-print("\nPreop and Postop Dataset \n", preop_postop)
+out = summary.loc[:, list(planned_headers.values()) + list(preop_headers.values())]
 
-if len(sys.argv) > 1 and sys.argv[1] == "w":
-	preop.to_csv("treated/preop_only_data.csv")
-	preop_postop.to_csv("treated/preop_postop_data.csv")
+def get_morphology(jlo, hka, jlo_thresh=2, hka_thresh=1):
+	morph_table = [	[1, 2, 3],
+					[4, 5, 6],
+					[7, 8, 9]]
+
+	if -1 * hka_thresh < hka and hka < hka_thresh:
+		hka_num = 1
+	elif hka > hka_thresh:
+		hka_num = 0
+	else: 
+		hka_num = 2
+	
+	if -1 * jlo_thresh < jlo and jlo < jlo_thresh:
+		jlo_num = 1
+	elif jlo > jlo_thresh:
+		jlo_num = 2
+	else: 
+		jlo_num = 0
+
+	return morph_table[jlo_num][hka_num]
+
+planned_morphs = out.apply(lambda x: get_morphology(x[planned_headers['jlo']], x[planned_headers['hka']]), axis=1)
+preop_morphs = out.apply(lambda x: get_morphology(x[preop_headers['jlo']]-180, x[preop_headers['hka']]), axis=1)
+
+out["Planned Morphology"] = planned_morphs
+out["Pre-op Morphology"] = preop_morphs
+
+out.to_csv('treated/morphologies.csv')
