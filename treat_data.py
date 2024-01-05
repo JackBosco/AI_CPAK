@@ -9,7 +9,6 @@ import pandas as pd
 import sys
 
 df = pd.read_excel("raw/mako_data.xlsx", header=1)
-col_headers = list(df.columns)
 
 # TODO change name of the femoral and tibial rotation for the last edited screen
 
@@ -17,16 +16,53 @@ df.rename(columns={"HAS SUMMARY IMAGE (YES=1,NO=0)": "has_summary_image"}, inpla
 
 summary = df[df["has_summary_image"] == 1].copy().set_index(df.columns[0])
 
-planned_headers = {'jlo': 'Femoral Rotation: Coronal (Varus = +, Valgus = -) (degrees)', #not correct
-				   'hka' : 'Tibial Rotation: Coronal (Varus = +, Valgus = -) (degrees)'
-				}
-preop_headers = {'hka': 'Joint Line: aHKA (Varus = +, Valgus = -) (degrees)', # mult by -1
-				 'jlo': 'Joint Line: JLO (degrees)' # subtract 180
-				}
+# declare headers 
 
-summary.dropna(axis='index', subset=list(preop_headers.values()) + list(planned_headers.values()), inplace=True) # drops rows without planned and postop hka, jlo
+planned_headers = {	'ldfa': 'Femoral Rotation: Coronal (Varus = +, Valgus = -) (degrees)',
+				   	'mpta' : 'Tibial Rotation: Coronal (Varus = +, Valgus = -) (degrees).1',
+					'hka' : 'Planned aHKA (Varus < -2º, Valgus > 2º)',
+					'jlo' : 'Planned JLO (Apex Distal > 183º, Apex Proximal < 177º)'
+				}
+preop_headers = {'hka': 'Pre-op aHKA (Varus < -2º, Valgus > 2º)', # mult by -1
+				 'jlo': 'Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)' # subtract 180
+				}
+old_hka = 'Joint Line: aHKA (Varus = +, Valgus = -) (degrees)' 
+old_jlo = 'Joint Line: JLO (degrees)'
 
-out = summary.loc[:, list(planned_headers.values()) + list(preop_headers.values())]
+summary.rename(columns={old_hka: preop_headers['hka'], old_jlo: preop_headers['jlo']}, inplace=True)
+
+summary.dropna(axis='index', 
+			   subset=list(preop_headers.values()) +
+					[planned_headers['ldfa'], planned_headers['mpta']] ,
+					inplace=True) # drops rows without planned and postop hka, jlo, ldfa, mpta
+
+#==================== preop ======================
+# hka, jlo for pre-op
+out = summary.loc[:, list(preop_headers.values())]
+# hka *= -1
+out[preop_headers['hka']] *= -1
+
+#==================== postop =====================
+
+#out = summary.loc[:, list(planned_headers.values()) + list(preop_headers.values())]
+
+# project ldfa and mpta from summary images
+planned_vals = summary.loc[:, [planned_headers['ldfa'], planned_headers['mpta']]]
+
+# MPTA = 90 - summary tibial cronal rotation
+planned_vals[planned_headers['mpta']] *= -1
+planned_vals[planned_headers['mpta']] += 90
+
+# LDFA = summary femoral coronal rotation + 90
+planned_vals[planned_headers['ldfa']] += 90
+
+#hka, jlo for post-op
+#aHKA = MPTA - LDFA
+out[planned_headers['hka']] = planned_vals[planned_headers['mpta']] - planned_vals[planned_headers['ldfa']]
+#JLO = MPTA + LDFA
+out[planned_headers['jlo']] = planned_vals[planned_headers['mpta']] + planned_vals[planned_headers['ldfa']]
+
+# ===================getting morphologies =======================
 
 def get_morphology(jlo, hka, jlo_thresh=3, hka_thresh=2): #
 	morph_table = [	[1, 2, 3],
@@ -49,8 +85,8 @@ def get_morphology(jlo, hka, jlo_thresh=3, hka_thresh=2): #
 
 	return morph_table[jlo_num][hka_num]
 
-planned_morphs = out.apply(lambda x: get_morphology(x[planned_headers['jlo']], x[planned_headers['hka']]), axis=1)
-preop_morphs = out.apply(lambda x: get_morphology(x[preop_headers['jlo']]-180, x[preop_headers['hka']]*-1), axis=1)
+planned_morphs = out.apply(lambda x: get_morphology(x[planned_headers['jlo']]-180, x[planned_headers['hka']]), axis=1)
+preop_morphs = out.apply(lambda x: get_morphology(x[preop_headers['jlo']]-180, x[preop_headers['hka']]), axis=1)
 
 out["Planned Morphology"] = planned_morphs
 out["Pre-op Morphology"] = preop_morphs
