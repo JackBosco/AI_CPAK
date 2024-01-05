@@ -14,8 +14,9 @@ Postop
 LDFA = summary femoral coronal rotation + 90
 MPTA = 90 - summary tibial cronal rotation
 
-JLO = 
-aHKA = (summary Tibial rotation - 90 - LDFA)
+JLO = MPTA + LDFA
+aHKA = MPTA - LDFA
+
 
 -----------------------------
 
