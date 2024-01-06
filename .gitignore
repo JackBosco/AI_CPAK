@@ -129,6 +129,6 @@ dmypy.json
 .pyre/
 
 #data
-raw/
-treated/
+raw/*
+treated/*
 related_works/*.pdf
