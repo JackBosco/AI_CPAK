@@ -132,5 +132,5 @@ dmypy.json
 raw/*
 !raw/readme.md
 treated/*
-!treated/whatsthis.md
+!treated/readme.md
 related_works/**/.pdf
