@@ -130,5 +130,7 @@ dmypy.json
 
 #data
 raw/*
+!raw/whatsthis.md
 treated/*
-related_works/*.pdf
+!treated/whatsthis.md
+related_works/**/.pdf
