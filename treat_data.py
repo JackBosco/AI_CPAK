@@ -69,19 +69,19 @@ def get_morphology(jlo, hka, jlo_thresh=3, hka_thresh=2): #
 					[4, 5, 6],
 					[7, 8, 9]]
 
-	if -1 * hka_thresh < hka and hka < hka_thresh:
-		hka_num = 1
-	elif hka > hka_thresh:
+	if hka < -1 * hka_thresh:
 		hka_num = 0
-	else: 
+	elif hka > hka_thresh:
 		hka_num = 2
+	else: 
+		hka_num = 1
 	
-	if -1 * jlo_thresh < jlo and jlo < jlo_thresh:
-		jlo_num = 1
+	if jlo < -1 * jlo_thresh:
+		jlo_num = 0
 	elif jlo > jlo_thresh:
 		jlo_num = 2
 	else: 
-		jlo_num = 0
+		jlo_num = 1
 
 	return morph_table[jlo_num][hka_num]
 
