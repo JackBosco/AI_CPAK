@@ -1,0 +1,6 @@
+#ignore file for python
+
+./__pycache__
+raw/*
+treated/*
+related_works/*.pdf
