@@ -11,7 +11,7 @@ preop_hka, preop_jlo = df.loc[:, cols[0]], df.loc[:, cols[1]]
 postop_hka, postop_jlo = df.loc[:, cols[2]], df.loc[:, cols[3]]
 
 # ==========plot preop data================
-fig, ax = plt.subplots(nrows=2, figsize = (8,8), sharex='all', sharey='all')
+fig, ax = plt.subplots(nrows=2, figsize = (8,8), sharex='col', sharey='all')
 
 #plotting black for preop
 ax[0].scatter(x=preop_hka, 
@@ -44,9 +44,9 @@ avg_postop_valgus = np.average(postop_valgus[cols[2]]), np.average(postop_valgus
 
 
 ax[1].scatter(avg_postop_verus[0], avg_postop_verus[1], c='purple')
-ax[1].annotate('verus postop', avg_postop_verus)
+ax[1].annotate('varus postop', avg_postop_verus)
 ax[1].scatter(avg_preop_verus[0], avg_preop_verus[1], c='purple')
-ax[1].annotate('verus preop', avg_preop_verus)
+ax[1].annotate('varus preop', avg_preop_verus)
 ax[1].scatter(avg_preop_aligned[0], avg_preop_aligned[1], c='brown')
 ax[1].annotate('aligned preop', avg_preop_aligned)
 ax[1].scatter(avg_postop_aligned[0], avg_postop_aligned[1], c='brown')
