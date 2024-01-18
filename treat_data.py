@@ -8,9 +8,12 @@ Treating the MAKO data to remove unuseful data and compress and discretize usefu
 import pandas as pd
 import sys
 
+try:
+	temp = open("raw/mako_data.xlsx", 'r')
+	temp.close()
+except:
+	raise Exception("mako_data.xlsx not present in ./raw directory. This file is not part of the standard repo. See ./raw/README.md for more details")
 df = pd.read_excel("raw/mako_data.xlsx", header=1)
-
-# TODO change name of the femoral and tibial rotation for the last edited screen
 
 df.rename(columns={"HAS SUMMARY IMAGE (YES=1,NO=0)": "has_summary_image"}, inplace=True)
 
