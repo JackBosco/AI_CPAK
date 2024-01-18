@@ -3,6 +3,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+try:
+	f = open('treated/morphologies.csv', 'r')
+	f.close()
+except:
+	raise Exception("morphologies.csv not found in ./treated directory. This file is not part of the standard repo. See ./treated/README.md for more details")
 df = pd.read_csv("treated/morphologies.csv", index_col=0)
 
 cols = list(df.columns)
@@ -71,5 +77,5 @@ ax[0].set_title('Pre and Post op Knee Alignment Morphologies')
 ax[1].set_title('Average Pre and Post op Knee Alignment Morphologies')
 
 ax[0].legend()
-ax[1].legend(loc='lower right')
+#ax[1].legend(loc='lower right')
 plt.show()
