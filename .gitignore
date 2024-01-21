@@ -135,3 +135,4 @@ raw/*
 treated/*
 !treated/readme.md
 related_works/**/.pdf
+.vscode/
