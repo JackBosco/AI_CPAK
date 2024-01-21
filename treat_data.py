@@ -13,11 +13,11 @@ try:
 	temp.close()
 except:
 	raise Exception("mako_data.xlsx not present in ./raw directory. This file is not part of the standard repo. See ./raw/README.md for more details")
-df = pd.read_excel("raw/mako_data.xlsx", header=1)
+df = pd.read_excel("raw/mako_data.xlsx", header=1, index_col=0)
 
 df.rename(columns={"HAS SUMMARY IMAGE (YES=1,NO=0)": "has_summary_image"}, inplace=True)
 
-summary = df[df["has_summary_image"] == 1].copy().set_index(df.columns[0])
+summary = df[df["has_summary_image"] == 1].copy()
 
 # declare headers 
 
@@ -41,7 +41,7 @@ summary.dropna(axis='index',
 
 #==================== preop ======================
 # hka, jlo for pre-op
-out = summary.loc[:, list(preop_headers.values())]
+out = summary.loc[:, list(preop_headers.values()) + ['Age at Surgery', 'BMI']]
 # hka *= -1
 out[preop_headers['hka']] *= -1
 
@@ -93,5 +93,10 @@ preop_morphs = out.apply(lambda x: get_morphology(x[preop_headers['jlo']]-180, x
 
 out["Planned Morphology"] = planned_morphs
 out["Pre-op Morphology"] = preop_morphs
+
+age, bmi = out.loc[:, 'Age at Surgery'], out.loc[:, 'BMI']
+out.drop(columns=['Age at Surgery', 'BMI'], inplace=True)
+out['Age at Surgery']= age
+out['BMI']= bmi
 
 out.to_csv('treated/morphologies.csv')
