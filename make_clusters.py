@@ -21,23 +21,24 @@ data = df.iloc[:, 0:4]
 options = []
 if 'age' in sys.argv:
 	options.append('age')
-	data['age'] = df['Age at Surgery'] / 10
+	data['age'] = df['Age at Surgery']
 if 'bmi' in sys.argv:
 	options.append('bmi')
-	data['bmi'] = df['BMI'] / 10
-
-N_CLUSTERS = 4
+	data['bmi'] = df['BMI']
+if 'clusters' in sys.argv:
+	N_CLUSTERS = int(sys.argv[sys.argv.index('clusters')+1])
+else:
+	N_CLUSTERS = 4
 colors = ['black', 'blue', 'red', 'green', 'grey', 'brown']
 
+# NORMALIZE
+norm_data = (data-data.mean())/data.std()
+
 # get data from the kmeans
-# data['Planned aHKA (Varus < -2º, Valgus > 2º)'] *= 2
-# data['Planned JLO (Apex Distal > 183º, Apex Proximal < 177º)'] *= 2
 kmeans = KMeans(n_clusters=N_CLUSTERS, max_iter=1000)
-kmeans.fit(data)
-clusters = kmeans.predict(data)
+kmeans.fit(norm_data)
+clusters = kmeans.predict(norm_data)
 data['cluster'] = clusters
-# data['Planned aHKA (Varus < -2º, Valgus > 2º)'] /= 2
-# data['Planned JLO (Apex Distal > 183º, Apex Proximal < 177º)'] /= 2
 
 # make data visualization with the clusters
 fig, ax = plt.subplots(nrows=2, figsize = (8,8), sharex='col', sharey='all')
@@ -68,5 +69,5 @@ for a in ax:
 ax[0].set_title("Pre-Op Alignment")
 ax[1].set_title("Post-Op Alignment")
 fig.suptitle("Clusters of Pre-Op and Post-Op Morphologies with KMeans\n"+
-			 "[n_clusters=3 " + ' '.join(options) + ']')
+			 "[n_clusters={0} ".format(N_CLUSTERS) + ' '.join(options) + ']')
 plt.show()
