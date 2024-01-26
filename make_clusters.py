@@ -31,8 +31,26 @@ else:
 	N_CLUSTERS = 4
 colors = ['black', 'blue', 'red', 'green', 'grey', 'brown']
 
+# TODO: remove outliers in JLO and aHKA for preop using IQR
+q1 = data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'].quantile(0.25)
+q3 = data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'].quantile(0.75)
+iqr = q3 - q1
+lower_bound = q1 - 1.5 * iqr
+upper_bound = q3 + 1.5 * iqr
+data = data[(data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'] >= lower_bound) & (data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'] <= upper_bound)]
+
+q1 = data['Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)'].quantile(0.25)
+q3 = data['Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)'].quantile(0.75)
+iqr = q3 - q1
+lower_bound = q1 - 1.5 * iqr
+upper_bound = q3 + 1.5 * iqr
+data = data[(data['Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)'] >= lower_bound) & (data['Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)'] <= upper_bound)]
+
 # NORMALIZE
 norm_data = (data-data.mean())/data.std()
+
+# drop the JLOs from the normalized data
+norm_data.drop(columns=['Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)', 'Planned JLO (Apex Distal > 183º, Apex Proximal < 177º)'], inplace=True)
 
 # get data from the kmeans
 kmeans = KMeans(n_clusters=N_CLUSTERS, max_iter=1000)
