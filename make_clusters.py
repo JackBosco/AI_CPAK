@@ -31,7 +31,7 @@ else:
 	N_CLUSTERS = 4
 colors = ['black', 'blue', 'red', 'green', 'grey', 'brown']
 
-# TODO: remove outliers in JLO and aHKA for preop using IQR
+# remove outliers in JLO and aHKA for preop using IQR
 q1 = data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'].quantile(0.25)
 q3 = data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'].quantile(0.75)
 iqr = q3 - q1
