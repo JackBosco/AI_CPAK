@@ -1,0 +1,17 @@
+Deep Learning: Automatic feature engineering, representations built with layers
+
+Canonical ML: better when we have less data
+
+Sequential and Recursive feature analysis, feature importance values <- decision tree split by WHAT?
+
+FOR NEXT Tuesday: 
+1) learn standard scalar stuff https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html
+2) why is SVM beneficial? Is there anything better for regression given we want to approximate aHKA?
+
+FOR Conversation with Doctors at 2:00
+1) understand their desire (pretend it is candyland)
+2) these post-op values are predicitions based on Doctor's knowledge, is it useful to predict predictions?
+3) does the k-clustering tell us anything
+	- "I'm not sure what you are attempting to learn from this clustering"
+	- clustering input and output together v.s. seperating
+	- what am I trying to gain insight into with the clustering

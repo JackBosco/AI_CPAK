@@ -46,7 +46,8 @@ lower_bound = q1 - 1.5 * iqr
 upper_bound = q3 + 1.5 * iqr
 data = data[(data['Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)'] >= lower_bound) & (data['Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)'] <= upper_bound)]
 
-# NORMALIZE
+# STANDARDIZE with the Standard Scalar
+# https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html
 norm_data = (data-data.mean())/data.std()
 
 # drop the JLOs from the normalized data
