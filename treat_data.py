@@ -24,10 +24,10 @@ summary = df[df["has_summary_image"] == 1].copy()
 planned_headers = {	'ldfa': 'Femoral Rotation: Coronal (Varus = +, Valgus = -) (degrees)',
 				   	'mpta' : 'Tibial Rotation: Coronal (Varus = +, Valgus = -) (degrees).1',
 					'hka' : 'Planned aHKA (Varus < -2º, Valgus > 2º)',
-					'jlo' : 'Planned JLO (Apex Distal > 183º, Apex Proximal < 177º)'
+					'jlo' : 'Planned JLO (Apex Proximal > 183º, Apex Distal < 177º)'
 				}
 preop_headers = {'hka': 'Pre-op aHKA (Varus < -2º, Valgus > 2º)', # mult by -1
-				 'jlo': 'Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)' # subtract 180
+				 'jlo': 'Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)' # subtract 180
 				}
 old_hka = 'Joint Line: aHKA (Varus = +, Valgus = -) (degrees)' 
 old_jlo = 'Joint Line: JLO (degrees)'

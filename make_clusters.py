@@ -32,26 +32,26 @@ else:
 colors = ['black', 'blue', 'red', 'green', 'grey', 'brown']
 
 # remove outliers in JLO and aHKA for preop using IQR
-q1 = data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'].quantile(0.25)
-q3 = data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'].quantile(0.75)
-iqr = q3 - q1
-lower_bound = q1 - 1.5 * iqr
-upper_bound = q3 + 1.5 * iqr
-data = data[(data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'] >= lower_bound) & (data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'] <= upper_bound)]
+# q1 = data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'].quantile(0.25)
+# q3 = data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'].quantile(0.75)
+# iqr = q3 - q1
+# lower_bound = q1 - 1.5 * iqr
+# upper_bound = q3 + 1.5 * iqr
+# data = data[(data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'] >= lower_bound) & (data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'] <= upper_bound)]
 
-q1 = data['Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)'].quantile(0.25)
-q3 = data['Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)'].quantile(0.75)
-iqr = q3 - q1
-lower_bound = q1 - 1.5 * iqr
-upper_bound = q3 + 1.5 * iqr
-data = data[(data['Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)'] >= lower_bound) & (data['Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)'] <= upper_bound)]
+# q1 = data['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)'].quantile(0.25)
+# q3 = data['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)'].quantile(0.75)
+# iqr = q3 - q1
+# lower_bound = q1 - 1.5 * iqr
+# upper_bound = q3 + 1.5 * iqr
+# data = data[(data['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)'] >= lower_bound) & (data['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)'] <= upper_bound)]
 
 # STANDARDIZE with the Standard Scalar
 # https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html
 norm_data = (data-data.mean())/data.std()
 
 # drop the JLOs from the normalized data
-norm_data.drop(columns=['Pre-op JLO (Apex Distal > 183º, Apex Proximal < 177º)', 'Planned JLO (Apex Distal > 183º, Apex Proximal < 177º)'], inplace=True)
+norm_data.drop(columns=['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)', 'Planned JLO (Apex Proximal > 183º, Apex Distal < 177º)'], inplace=True)
 
 # get data from the kmeans
 kmeans = KMeans(n_clusters=N_CLUSTERS, max_iter=1000)
@@ -82,7 +82,7 @@ for a in ax:
 	a.axvline(x=-2)
 	a.axvline(x=2)
 	a.set_xlabel("aHKA (Varus < -2º, Valgus > 2º)")
-	a.set_ylabel("JLO (Apex Distal > 183º, Apex Proximal < 177º)")
+	a.set_ylabel("JLO (Apex Proximal > 183º, Apex Distal < 177º)")
 	a.legend()
 
 ax[0].set_title("Pre-Op Alignment")

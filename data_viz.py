@@ -50,7 +50,7 @@ postop_valgus = df.loc[df["Pre-op Morphology"] % 3 == 0, cols[2]:cols[3]]
 avg_postop_valgus = np.average(postop_valgus[cols[2]]), np.average(postop_valgus[cols[3]])
 
 
-ax[1].scatter(avg_postop_verus[0], avg_postop_verus[1], c='purple', label='Average for verus preop group')
+ax[1].scatter(avg_postop_verus[0], avg_postop_verus[1], c='purple', label='Average for varus preop group')
 ax[1].annotate('Postop', avg_postop_verus)
 ax[1].scatter(avg_preop_verus[0], avg_preop_verus[1], c='purple')
 ax[1].annotate('Preop', avg_preop_verus)
@@ -71,7 +71,7 @@ for a in ax:
 	a.axvline(x=-2)
 	a.axvline(x=2)
 	a.set_xlabel("aHKA (Varus < -2º, Valgus > 2º)")
-	a.set_ylabel("JLO (Apex Distal > 183º, Apex Proximal < 177º)")
+	a.set_ylabel("JLO (Apex Proximal > 183º, Apex Distal < 177º)")
 
 #axis titles
 ax[0].set_title('Pre and Post op Knee Alignment Morphologies')
