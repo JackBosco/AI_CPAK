@@ -8,6 +8,10 @@ FOR NEXT Tuesday:
 1) learn standard scalar stuff https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html
 2) why is SVM beneficial? Is there anything better for regression given we want to approximate aHKA?
 
+1) non-linear SVM regression is 1D
+2) nearest neighbor regression (radius neares neighbor)
+3) gaussian process regression (https://scikit-learn.org/stable/auto_examples/gaussian_process/plot_gpr_co2.html#sphx-glr-auto-examples-gaussian-process-plot-gpr-co2-py)
+
 FOR Conversation with Doctors at 2:00
 1) understand their desire (pretend it is candyland)
 2) these post-op values are predicitions based on Doctor's knowledge, is it useful to predict predictions?
@@ -15,3 +19,20 @@ FOR Conversation with Doctors at 2:00
 	- "I'm not sure what you are attempting to learn from this clustering"
 	- clustering input and output together v.s. seperating
 	- what am I trying to gain insight into with the clustering
+
+
+See if femoral transverse rotation
+CT mako machines: INTERNHSIP????
+
+Settle on canonical ML algorithm I want to use:
+	1) give watson small report
+		- preprocessing analysis
+		- model with validation
+		- analysis on structure of model
+	2) try different clustering algorithms for age, bmi
+		- see how centroid plants are shifting
+
+- continuous data
+- regression prediction
+- only 600-700 data points
+- only 6-7 features (simplistic model)
