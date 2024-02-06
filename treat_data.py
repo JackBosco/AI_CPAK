@@ -8,6 +8,8 @@ Treating the MAKO data to remove unuseful data and compress and discretize usefu
 import pandas as pd
 import sys
 
+from sympy import inverse_laplace_transform
+
 try:
 	temp = open("raw/mako_data.xlsx", 'r')
 	temp.close()
@@ -98,5 +100,11 @@ age, bmi = out.loc[:, 'Age at Surgery'], out.loc[:, 'BMI']
 out.drop(columns=['Age at Surgery', 'BMI'], inplace=True)
 out['Age at Surgery']= age
 out['BMI']= bmi
+
+#==================== add femoral transverse rotation =====================
+
+out = out.join(df.loc[:, 'Femoral Rotation: Transverse (External = +, Internal = -) (degrees)'].dropna(), how='inner')
+
+#================ save to csv ======================
 
 out.to_csv('treated/morphologies.csv')

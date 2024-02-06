@@ -8,6 +8,7 @@ from pyparsing import col
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import sys
+from sklearn.preprocessing import StandardScaler
 
 try:
 	f = open('treated/morphologies.csv', 'r')
@@ -48,7 +49,8 @@ colors = ['black', 'blue', 'red', 'green', 'grey', 'brown']
 
 # STANDARDIZE with the Standard Scalar
 # https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html
-norm_data = (data-data.mean())/data.std()
+scalar = StandardScaler()
+norm_data = scalar.fit_transform(data)
 
 # drop the JLOs from the normalized data
 norm_data.drop(columns=['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)', 'Planned JLO (Apex Proximal > 183º, Apex Distal < 177º)'], inplace=True)
