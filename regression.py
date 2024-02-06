@@ -45,5 +45,7 @@ print(f"Mean Squared Error for linear regression on training data: {error_train}
 fig = plt.figure()
 
 plt.scatter(X.iloc[:, 0], y)
-plt.plot(X_train.iloc[:, 0].sort_values(), pd.Series(y_pred_train).sort_values(), color='red')# X_train.iloc[:, 1], y_pred_train, color='red')
+plt.plot(X_train.iloc[:, 0].sort_values(), pd.Series(y_pred_train).sort_values(), color='red')
+plt.xlabel('Pre-op HKA')
+plt.ylabel('Predicted Planned HKA')
 plt.show()
