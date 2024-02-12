@@ -2,7 +2,6 @@
 Jack Bosco
 """
 
-from click import group
 import pandas as pd
 from pyparsing import col
 from sklearn.cluster import KMeans
@@ -53,7 +52,7 @@ scalar = StandardScaler()
 norm_data = scalar.fit_transform(data)
 
 # drop the JLOs from the normalized data
-norm_data.drop(columns=['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)', 'Planned JLO (Apex Proximal > 183º, Apex Distal < 177º)'], inplace=True)
+#norm_data.drop(columns=['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)', 'Planned JLO (Apex Proximal > 183º, Apex Distal < 177º)'], inplace=True)
 
 # get data from the kmeans
 kmeans = KMeans(n_clusters=N_CLUSTERS, max_iter=1000)
