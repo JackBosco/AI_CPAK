@@ -28,3 +28,7 @@ However, if you have the `mako_data.xlsx` file, drop that in `raw`.
    ```
    python3 data_viz.py
    ```
+5. Create and visualize a regression model for planned aHKA
+   ```
+   python3 regression.py
+   ```
