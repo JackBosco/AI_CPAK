@@ -1,8 +1,7 @@
 """
-	Regression analysis for the alignment data
+	Regression analysis for the alignment data using linear regression
 	Author: Jack Bosco
 """
-from matplotlib.figure import figaspect
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
