@@ -2,19 +2,19 @@
 Jack Bosco
 """
 
+import config
 import pandas as pd
-from pyparsing import col
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import sys
 from sklearn.preprocessing import StandardScaler
 
 try:
-	f = open('treated/morphologies.csv', 'r')
+	f = open(config.treated_path, 'r')
 	f.close()
 except:
 	raise Exception("morphologies.csv not found in ./treated directory. This file is not part of the standard repo. See ./treated/README.md for more details")
-df = pd.read_csv('treated/morphologies.csv', index_col=0)
+df = pd.read_csv(config.treated_path, index_col=0)
 data = df.iloc[:, 0:4]
 
 # optional arguments for including more elements in the clustering
@@ -31,28 +31,10 @@ else:
 	N_CLUSTERS = 4
 colors = ['black', 'blue', 'red', 'green', 'grey', 'brown']
 
-# remove outliers in JLO and aHKA for preop using IQR
-# q1 = data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'].quantile(0.25)
-# q3 = data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'].quantile(0.75)
-# iqr = q3 - q1
-# lower_bound = q1 - 1.5 * iqr
-# upper_bound = q3 + 1.5 * iqr
-# data = data[(data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'] >= lower_bound) & (data['Pre-op aHKA (Varus < -2º, Valgus > 2º)'] <= upper_bound)]
-
-# q1 = data['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)'].quantile(0.25)
-# q3 = data['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)'].quantile(0.75)
-# iqr = q3 - q1
-# lower_bound = q1 - 1.5 * iqr
-# upper_bound = q3 + 1.5 * iqr
-# data = data[(data['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)'] >= lower_bound) & (data['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)'] <= upper_bound)]
-
 # STANDARDIZE with the Standard Scalar
 # https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html
 scalar = StandardScaler()
 norm_data = scalar.fit_transform(data)
-
-# drop the JLOs from the normalized data
-#norm_data.drop(columns=['Pre-op JLO (Apex Proximal > 183º, Apex Distal < 177º)', 'Planned JLO (Apex Proximal > 183º, Apex Distal < 177º)'], inplace=True)
 
 # get data from the kmeans
 kmeans = KMeans(n_clusters=N_CLUSTERS, max_iter=1000)

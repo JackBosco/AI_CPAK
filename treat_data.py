@@ -6,16 +6,18 @@ Treating the MAKO data to remove unuseful data and compress and discretize usefu
 """
 
 import pandas as pd
-import sys
+"""
+Jack Bosco
+Treat the data
+"""
 
-from sympy import inverse_laplace_transform
-
+import config
 try:
-	temp = open("raw/mako_data.xlsx", 'r')
+	temp = open(config.raw_path, 'r')
 	temp.close()
 except:
 	raise Exception("mako_data.xlsx not present in ./raw directory. This file is not part of the standard repo. See ./raw/README.md for more details")
-df = pd.read_excel("raw/mako_data.xlsx", header=1, index_col=0)
+df = pd.read_excel(config.raw_path, header=1, index_col=0)
 
 df.rename(columns={"HAS SUMMARY IMAGE (YES=1,NO=0)": "has_summary_image"}, inplace=True)
 
@@ -107,4 +109,4 @@ out = out.join(df.loc[:, 'Femoral Rotation: Transverse (External = +, Internal =
 
 #================ save to csv ======================
 
-out.to_csv('treated/morphologies.csv')
+out.to_csv(config.treated_path)
