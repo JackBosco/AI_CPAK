@@ -1,16 +1,15 @@
-from cProfile import label
-from matplotlib import legend
+import config
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
 
 try:
-	f = open('treated/morphologies.csv', 'r')
+	f = open(config.treated_path, 'r')
 	f.close()
 except:
 	raise Exception("morphologies.csv not found in ./treated directory. This file is not part of the standard repo. See ./treated/README.md for more details")
-df = pd.read_csv("treated/morphologies.csv", index_col=0)
+df = pd.read_csv(config.treated_path, index_col=0)
 
 cols = list(df.columns)
 

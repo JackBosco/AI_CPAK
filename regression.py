@@ -2,6 +2,7 @@
 	Regression analysis for the alignment data using linear regression
 	Author: Jack Bosco
 """
+import config
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
@@ -10,7 +11,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 
 # read in the data, split into X and y
-df = pd.read_csv('treated/morphologies.csv', index_col=0)
+df = pd.read_csv(config.treated_path, index_col=0)
 X = df.iloc[:, [0, 1, 6, 7, 8]] # preop hka, preop jlo, age, bmi, femoral transverse rotation
 y = df.iloc[:, 2] # planned hka
 
