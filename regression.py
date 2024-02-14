@@ -13,6 +13,8 @@ from sklearn.metrics import mean_squared_error
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import GridSearchCV
 
+import numpy as np
+
 # read in the data, split into X and y
 df = pd.read_csv(config.treated_path, index_col=0)
 X = df.iloc[:, [0, 1, 6, 7, 8]] # preop hka, preop jlo, age, bmi, femoral transverse rotation
@@ -41,7 +43,13 @@ def test_model(fit_model, model_name, testset, trainset):
 	print(f"Score: {fit_model.score(testset[0], testset[1])}")
 
 	plt.scatter(X.iloc[:, 0], y, color='blue')
-	plt.plot(X_train.iloc[:, 0].sort_values(), pd.Series(y_pred_train).sort_values(), color='red')
+	#mn, mx = X.iloc[:, 0].min(), X.iloc[:, 0].max()
+	#grad = np.linspace(mn, mx, 200)
+	dt = pd.DataFrame({'0':np.array(X_train.iloc[:, 0]), '1':pd.Series(y_pred_train)})
+	dt.sort_values(by='0', inplace=True)
+	print(dt)
+	#plt.plot(X_train.iloc[:, 0], pd.Series(y_pred_train), color='red')
+	plt.plot(dt.iloc[:, 0], dt.iloc[:, 1], color='red')
 	plt.title(f'{model_name} Model Prediction for Post-op HKA from Pre-op HKA')
 	plt.xlabel('Pre-op HKA')
 	plt.ylabel('Predicted Planned HKA')
