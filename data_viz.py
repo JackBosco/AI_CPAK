@@ -70,7 +70,8 @@ for a in ax:
 	a.axvline(x=-2)
 	a.axvline(x=2)
 	a.set_xlabel("aHKA (Varus < -2º, Valgus > 2º)")
-	a.set_ylabel("JLO (Apex Proximal > 183º, Apex Distal < 177º)")
+	a.set_ylabel("JLO")
+	a.yaxis.label.set_rotation(45)
 
 #axis titles
 ax[0].set_title('Pre and Post op Knee Alignment Morphologies')
