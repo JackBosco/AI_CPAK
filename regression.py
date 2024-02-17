@@ -2,7 +2,6 @@
 	Regression analysis for the alignment data using linear regression
 	Author: Jack Bosco
 """
-from curses import beep
 from sklearn.svm import NuSVR
 import config
 import pandas as pd
@@ -14,7 +13,6 @@ from sklearn.metrics import mean_squared_error
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import GridSearchCV
 import pickle
-
 import numpy as np
 
 # read in the data, split into X and y
