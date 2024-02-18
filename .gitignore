@@ -139,3 +139,9 @@ related_works/**/.pdf
 
 # saved models
 **/*.h5
+
+#random latex stuff
+writeup_tex/*
+#except the tex code and output PDF
+!writeup_tex/writeup.tex
+!writeup_tex/writeup.pdf

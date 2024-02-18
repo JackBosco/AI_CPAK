@@ -48,19 +48,21 @@ avg_preop_valgus = np.average(preop_valgus[cols[0]]), np.average(preop_valgus[co
 postop_valgus = df.loc[df["Pre-op Morphology"] % 3 == 0, cols[2]:cols[3]]
 avg_postop_valgus = np.average(postop_valgus[cols[2]]), np.average(postop_valgus[cols[3]])
 
-
-ax[1].scatter(avg_postop_verus[0], avg_postop_verus[1], c='purple', label='Average for varus preop group')
-ax[1].annotate('Postop', avg_postop_verus)
+# varus
+ax[1].scatter(avg_postop_verus[0], avg_postop_verus[1], c='purple', label='Average for varus preop→postop group')
 ax[1].scatter(avg_preop_verus[0], avg_preop_verus[1], c='purple')
-ax[1].annotate('Preop', avg_preop_verus)
-ax[1].scatter(avg_preop_aligned[0], avg_preop_aligned[1], c='brown', label='Average for aligned preop group')
-ax[1].annotate('Preop', avg_preop_aligned)
+ax[1].annotate(xy=avg_preop_verus, xytext=avg_postop_verus, arrowprops={'arrowstyle':'<|-', 'color':'purple', "alpha":1}, text=None)
+
+#aligned
+ax[1].scatter(avg_preop_aligned[0], avg_preop_aligned[1], c='brown', label='Average for aligned preop→postop group')
 ax[1].scatter(avg_postop_aligned[0], avg_postop_aligned[1], c='brown')
-ax[1].annotate('Postop', avg_postop_aligned)
-ax[1].scatter(avg_preop_valgus[0], avg_preop_valgus[1], c='green', label='Average for valgus preop group')
-ax[1].annotate('Preop', avg_preop_valgus)
+ax[1].annotate(xy=avg_preop_aligned, xytext=avg_postop_aligned, arrowprops={'arrowstyle':'<|-', 'color':'brown', "alpha":1}, text=None)
+
+
+#valgus
+ax[1].scatter(avg_preop_valgus[0], avg_preop_valgus[1], c='green', label='Average for valgus preop→postop group')
 ax[1].scatter(avg_postop_valgus[0], avg_postop_valgus[1], c='green')
-ax[1].annotate('Postop', avg_postop_valgus)
+ax[1].annotate(xy=avg_preop_valgus, xytext=avg_postop_valgus, arrowprops={'arrowstyle':'<|-', 'color':'green', "alpha":1}, text=None)
 
 #plot the lines
 ax[0].invert_yaxis()
