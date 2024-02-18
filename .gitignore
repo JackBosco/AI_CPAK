@@ -136,3 +136,6 @@ treated/*
 !treated/readme.md
 related_works/**/.pdf
 .vscode/
+
+# saved models
+**/*.h5
