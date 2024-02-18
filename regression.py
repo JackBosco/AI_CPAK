@@ -2,6 +2,7 @@
 	Regression analysis for the alignment data using linear regression
 	Author: Jack Bosco
 """
+import os
 from sklearn.svm import NuSVR
 import config
 import pandas as pd
@@ -78,8 +79,8 @@ def test_model(fit_model, model_name, testset, trainset, x_data, three_d=False):
 	plt.xlabel('Pre-op aHKA')
 	plt.ylabel('Planned aHKA')
 	plt.legend()
-	#plt.show()
 	plt.savefig('writeup_tex/'+f'{model_name}'.replace(' ','_') +'_regression.png')
+	plt.show()
 	plt.close()
 	
 
@@ -113,7 +114,10 @@ def do_mlp(train=True):
 		best = clf.best_estimator_
 		pickle.dump(best, open('neural_network.h5', 'wb'))
 	else:
-		best=pickle.load(open('neural_network.h5', 'rb'))
+		if 'neural_network.h5' not in os.listdir():
+			do_mlp()
+		else:
+			best=pickle.load(open('neural_network.h5', 'rb'))
 		
 	test_model(best, 
 			"neural network",
@@ -134,7 +138,10 @@ def do_svm(train=True):
 		best = clf.best_estimator_
 		pickle.dump(best, open('support_vector_machine.h5', 'wb'))
 	else:
-		best=pickle.load(open('support_vector_machine.h5', 'rb'))
+		if 'support_vector_machine.h5' not in os.listdir():
+			do_svm()
+		else:
+			best=pickle.load(open('support_vector_machine.h5', 'rb'))
 	
 	test_model(best,
 			"svm",
@@ -157,6 +164,6 @@ def do_gaus():
 
 if __name__ == '__main__':
 	do_lin()
-	do_mlp(train=False) # this takes a long time to run (R.I.P. YOUR CPU)
+	do_mlp(train=False) # this takes a long time to train (R.I.P. YOUR CPU)
 	do_svm(train=False)
 	#do_gaus()
