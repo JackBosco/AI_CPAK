@@ -8,6 +8,7 @@ from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import sys
 from sklearn.preprocessing import StandardScaler
+import numpy as np
 
 try:
 	f = open(config.treated_path, 'r')
@@ -15,26 +16,27 @@ try:
 except:
 	raise Exception("morphologies.csv not found in ./treated directory. This file is not part of the standard repo. See ./treated/README.md for more details")
 df = pd.read_csv(config.treated_path, index_col=0)
-data = df.iloc[:, 0:4]
+data = df.iloc[:, :4]
 
 # optional arguments for including more elements in the clustering
-options = []
+N_CLUSTERS = 3
+options = [f'n_clusters={N_CLUSTERS}']
 if 'age' in sys.argv:
 	options.append('age')
 	data['age'] = df['Age at Surgery']
 if 'bmi' in sys.argv:
 	options.append('bmi')
 	data['bmi'] = df['BMI']
+if 'fcr' in sys.argv:
+	options.append('femoral coronal rotation')
+	data['FCR'] = df.iloc[:, -1]
 if 'clusters' in sys.argv:
 	N_CLUSTERS = int(sys.argv[sys.argv.index('clusters')+1])
-else:
-	N_CLUSTERS = 4
-
-print(data)
+	options[0] = f'n_clusters={N_CLUSTERS}'
 
 # Remove the non-preop data from the clustering
-preop = data.drop(labels=["Planned aHKA (Varus < -2º, Valgus > 2º)", "Planned JLO (Apex Proximal > 183º, Apex Distal < 177º)"], axis=1)
-
+#preop = data.drop(labels=["Planned aHKA (Varus < -2º, Valgus > 2º)", "Planned JLO (Apex Proximal > 183º, Apex Distal < 177º)"], axis=1)
+preop=data
 colors = ['black', 'blue', 'red', 'green', 'grey', 'brown']
 
 # STANDARDIZE with the Standard Scalar
@@ -48,28 +50,35 @@ kmeans.fit(norm_data)
 clusters = kmeans.predict(norm_data)
 data['cluster'] = clusters
 
+
+
 # make data visualization with the clusters
-fig, ax = plt.subplots(nrows=3, figsize = (8,8), sharex='col', sharey='all')
+fig, ax = plt.subplots(nrows=2,ncols=2, figsize = (8,8), sharex='all', sharey='all')
 
 #plotting black for preop
 for i, color in zip(range(N_CLUSTERS), colors):
 	cluster = data.loc[data['cluster'] == i]
-	ax[0].scatter(x=cluster.iloc[:, 0],
+	ax[0][0].scatter(x=cluster.iloc[:, 0],
 				y=cluster.iloc[:, 1],
 				c=color, label="cluster " + str(i),
 				alpha=0.8)
-	ax[1].scatter(x=cluster.iloc[:, 2],
+	ax[0][1].scatter(x=cluster.iloc[:, 2],
 				y=cluster.iloc[:, 3],
 				c=color, label="cluster " + str(i),
 				alpha=0.8)
 	ci = data.loc[data["cluster"]==i, :]
 	for x1, y1, x2, y2 in zip(ci.iloc[:, 0], ci.iloc[:, 1], ci.iloc[:, 2], ci.iloc[:, 3]):
 		# draw a line from preop to postop on ax[0]
-		ax[2].annotate(xy=(x1, y1), xytext=(x2, y2), arrowprops={'arrowstyle':'<-', 'color':color, "alpha":.2}, text=None)
+		ax[1][0].annotate(xy=(x1, y1), xytext=(x2, y2), arrowprops={'arrowstyle':'<-', 'color':color, "alpha":.2}, text=None)
+	ax[1][1].annotate(xy=(np.average(ci.iloc[:, 0]), np.average(ci.iloc[:, 1]))
+			, xytext=(np.average(cluster.iloc[:, 2]), np.average(cluster.iloc[:, 3]))
+			, arrowprops={'color':color, 'alpha':1, 'arrowstyle':'<|-'}, text=None)
+	ax[1][1].arrow(0, 180, 0, 0, color=color, label=f'Average change for cluster {i}')
+	ax[1][0].arrow(0, 180, 0, 0, color=color, label=f'Pre-op→Post-op Change for cluster {i}')
 	
 
-ax[0].invert_yaxis()
-for a in ax:
+ax[0][0].invert_yaxis()
+for a in (ax[0][0], ax[0][1], ax[1][0], ax[1][1]):
 	a.axhline(y=177)
 	a.axhline(y=183)
 	a.axvline(x=-2)
@@ -80,9 +89,11 @@ for a in ax:
 	a.yaxis.label.set_rotation(45)
 	a.legend()
 
-ax[0].set_title("Pre-Op Alignment")
-ax[1].set_title("Post-Op Alignment")
-ax[2].set_title("Pre-Op to Post-Op Alignment")
+ax[0][0].set_title("Pre-Op Alignment")
+ax[0][1].set_title("Post-Op Alignment")
+ax[1][0].set_title("Pre-Op to Post-Op Alignment")
+ax[1][1].set_title("Average Pre-Op to Post-Op Alignment")
 fig.suptitle("Clusters of Pre-Op and Post-Op Morphologies with KMeans\n"+
-			 "[n_clusters={0} ".format(N_CLUSTERS) + ' '.join(options) + ']')
+			 "["+', '.join(options) + ']')
+plt.savefig('writeup_tex/clusters.png')
 plt.show()
