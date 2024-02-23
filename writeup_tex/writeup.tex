@@ -10,6 +10,15 @@ Di Gangi, Catherine; Watson, Cody Ph.D}
 
 \maketitle
 
+\textbf{%
+This is a VERY rough draft of the write-up. 
+It is meant to demonstrate the work I have done on the project in a way that you don't need to read any code.
+Document written by Jack Bosco. 
+Code for the data analysis, modeling, and visualization are also written by Jack Bosco. 
+}
+
+\newpage
+
 \begin{figure}[t]
 \includegraphics[width=.9\textwidth]{data_vis.png}
 \caption{These are the averages of the clusters - See CPAK reference}
@@ -26,8 +35,10 @@ The average change from pre-op to post-op is shown.
 \caption{These are the clusered data points.}
 \end{figure}
 
-First, the pre-operative data was standardized using the Z-score method.
-Then, the pre-operative alignments were clustered using the K-means algorithm.\\
+First, the pre-operative data was standardized using the standard scaler method.
+Then, the pre-operative alignments were clustered using the K-means clustering algorithm
+(see \href{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html#sklearn.cluster.KMeans}
+{\underline{Sklearn K-Means Clustering}}).\\
 Bottom Left: Arrows are drawn for each pre and post-operative pair (one pair per case).\\
 Bottom Right: Averages are taken for each cluser and the change from pre-op to post-op is shown.
 
@@ -40,7 +51,7 @@ Bottom Right: Averages are taken for each cluser and the change from pre-op to p
 	The regression is trained on the training set (blue)}
 \end{figure}
 
-To create this regression, the pre and post-operative aHKA values were standardized using the Z-score method.\\
+To create this regression, the pre and post-operative aHKA values were standardized using the standard scaler method.\\
 Then, the features are transformed using a polynomial transformation of degree 3 
 (see \href{https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html}{\underline{Sklearn Polynomial Features}}).\\
 Finally, the model is trained using a linear regression algorithm 
@@ -55,7 +66,7 @@ Finally, the model is trained using a linear regression algorithm
 	The regression is trained on the training set (blue)}
 \end{figure}
 
-To create this regression, the pre and post-operative aHKA values were standardized using the Z-score method.\\
+To create this regression, the pre and post-operative aHKA values were standardized using the standard scaler method.\\
 Then, the model is trained using a nu support vector regression algorithm
 (see \href{https://scikit-learn.org/stable/modules/generated/sklearn.svm.NuSVR.html#sklearn.svm.NuSVR}{\underline{Sklearn Support Vector Machine}}).
 
@@ -68,7 +79,8 @@ Then, the model is trained using a nu support vector regression algorithm
 	The regression is trained on the training set (blue)}
 \end{figure}
 
-To create this regression, the pre and post-operative aHKA values were standardized using the Z-score method.\\
+To create this regression, the pre and post-operative aHKA values were normalized using the min-max scaler
+method with feature range $(-1, 1)$.\\
 Then, the model is trained using a multi-layer perceptron (MLP) algorithm 
 (see \href{https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html}{\underline{Sklearn Multi-layer Perceptrion}}).
 
