@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage{graphicx}
+\usepackage{hyperref}
 
 \author{Meftah, Morteza M.D,; Waren, Daniel M.D; Bosco, Joseph A. IV;\\
 Di Gangi, Catherine; Watson, Cody Ph.D}
@@ -9,41 +10,67 @@ Di Gangi, Catherine; Watson, Cody Ph.D}
 
 \maketitle
 
-\begin{figure}[h]
+\begin{figure}[t]
 \includegraphics[width=.9\textwidth]{data_vis.png}
-\caption{These are the averages of the clusters. }
+\caption{These are the averages of the clusters - See CPAK reference}
 \end{figure}
 
-
+Top: Pre and post-op data displayed on a scatterchart of Joint Line Obliquity (JLO) and anterior Hip Knee Alignment (aHKA)\\
+Bottom: Average Pre and post-op alignment grouped by pre-operative aHKA values.
+The average change from pre-op to post-op is shown.
 
 \newpage
 
-\begin{figure}[h]
+\begin{figure}[t]
 \includegraphics[width=\textwidth]{clusters.png}
 \caption{These are the clusered data points.}
 \end{figure}
 
-\begin{figure}[h]
+First, the pre-operative data was standardized using the Z-score method.
+Then, the pre-operative alignments were clustered using the K-means algorithm.\\
+Bottom Left: Arrows are drawn for each pre and post-operative pair (one pair per case).\\
+Bottom Right: Averages are taken for each cluser and the change from pre-op to post-op is shown.
+
+\newpage
+
+\begin{figure}[t]
 	\includegraphics[width=\textwidth]{degree_3_polynomial_regression.png}
 	\caption{This is a regression trained using a linear regression algorithm.
 	The error is the mean squared distance from the testing set (black). 
 	The regression is trained on the training set (blue)}
 \end{figure}
 
+To create this regression, the pre and post-operative aHKA values were standardized using the Z-score method.\\
+Then, the features are transformed using a polynomial transformation of degree 3 
+(see \href{https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html}{\underline{Sklearn Polynomial Features}}).\\
+Finally, the model is trained using a linear regression algorithm 
+(see \href{https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html}{\underline{Sklearn Linear Regression}}).
 
-\begin{figure}[h]
+\newpage
+
+\begin{figure}[t]
 	\includegraphics[width=\textwidth]{svm_regression.png}
 	\caption{This is a regression trained using a support vector machine algorithm.
 	The error is the mean squared distance from the testing set (black). 
 	The regression is trained on the training set (blue)}
 \end{figure}
 
-\begin{figure}[h]
+To create this regression, the pre and post-operative aHKA values were standardized using the Z-score method.\\
+Then, the model is trained using a nu support vector regression algorithm
+(see \href{https://scikit-learn.org/stable/modules/generated/sklearn.svm.NuSVR.html#sklearn.svm.NuSVR}{\underline{Sklearn Support Vector Machine}}).
+
+\newpage
+
+\begin{figure}[t]
 	\includegraphics[width=\textwidth]{neural_network_regression.png}
 	\caption{This is a regression trained using a deep learning algorithm on a MLP/neural network model.
 	The error is the mean squared distance from the testing set (black). 
 	The regression is trained on the training set (blue)}
 \end{figure}
+
+To create this regression, the pre and post-operative aHKA values were standardized using the Z-score method.\\
+Then, the model is trained using a multi-layer perceptron (MLP) algorithm 
+(see \href{https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html}{\underline{Sklearn Multi-layer Perceptrion}}).
 
 \end{document}
 
