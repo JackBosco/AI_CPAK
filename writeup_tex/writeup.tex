@@ -1,6 +1,8 @@
 \documentclass{article}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{biblatex}
+\addbibresource{sources.bib}
 
 \author{Meftah, Morteza M.D,; Waren, Daniel M.D; Bosco, Joseph A. IV;\\
 Di Gangi, Catherine; Watson, Cody Ph.D}
@@ -16,6 +18,13 @@ It is meant to demonstrate the work I have done on the project in a way that you
 Document written by Jack Bosco. 
 Code for the data analysis, modeling, and visualization are also written by Jack Bosco. 
 }
+
+\section{Methods}
+
+\subsection{Data Collection}
+
+The data was collected from a robotic surgery system that was used to perform total knee arthroplasty (TKA) on 100 patients.
+
 
 \newpage
 
@@ -83,6 +92,10 @@ To create this regression, the pre and post-operative aHKA values were normalize
 method with feature range $(-1, 1)$.\\
 Then, the model is trained using a multi-layer perceptron (MLP) algorithm 
 (see \href{https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html}{\underline{Sklearn Multi-layer Perceptrion}}).
+
+\medskip
+
+\printbibliography
 
 \end{document}
 
