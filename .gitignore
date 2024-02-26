@@ -130,10 +130,10 @@ dmypy.json
 .pyre/
 
 #data
-raw/*
-!raw/readme.md
-treated/*
-!treated/readme.md
+**/raw/*
+!**/raw/readme.md
+**/treated/*
+!**/treated/readme.md
 related_works/**/.pdf
 .vscode/
 
