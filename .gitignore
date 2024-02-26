@@ -131,9 +131,9 @@ dmypy.json
 
 #data
 **/raw/*
-!**/raw/readme.md
+!**/raw/README.md
 **/treated/*
-!**/treated/readme.md
+!**/treated/README.md
 related_works/**/.pdf
 .vscode/
 
@@ -146,3 +146,4 @@ writeup_tex/*
 !writeup_tex/writeup.tex
 !writeup_tex/writeup.pdf
 !writeup_tex/*.png
+!writeup_tex/*.jpg
