@@ -136,6 +136,7 @@ dmypy.json
 !**/treated/README.md
 related_works/**/.pdf
 .vscode/
+.DS_Store
 
 # saved models
 **/*.h5

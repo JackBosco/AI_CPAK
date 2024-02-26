@@ -53,17 +53,18 @@ and the tibial resection amounts
 (Medial, Lateral)
 most likely to yeild suitable laxity for the implant.
 
-These predictions may be informed by the pre-operative deformity of the knee:
+These predictions may be informed by the pre-operative deformity of the knee.
+As aHKA values differ from the mean, alignments are Varus or Valgus according to the following rule ($\alpha=2$):
 
 \[\text{lateral morphology}=
 	\begin{cases}
 		\text{Varus} & \text{if } \text{aHKA} < -\alpha \\
 		\text{Valgus} & \text{if } \text{aHKA} > \alpha \\
-		\text{Aligned} & \text{if } \text{aHKA} \in [-\alpha, \alpha^\text{mm}]
+		\text{Aligned} & \text{if } \text{aHKA} \in [-\alpha, \alpha]
 	\end{cases} ^ \text{\cite{MacDessi2021-mi}}
 \]
 
-Dispite this useful metric, there exists no method for to predicting the optimal post-resection alignment based on the pre-operative alignment.
+Dispite the usefulness of this metric, there exists no method for to predicting the optimal post-resection alignment based on the pre-operative alignment.
 In this study, we propose the NYU model to predict optimal post-operative aHKA alignement 
 for achieving suitable laxity during a total knee replacement based on the pre-operative aHKA value.
 
