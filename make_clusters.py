@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import sys
 from sklearn.preprocessing import StandardScaler
 import numpy as np
+import sys
 
 try:
 	f = open(config.treated_path, 'r')
@@ -27,22 +28,24 @@ if 'age' in sys.argv:
 if 'bmi' in sys.argv:
 	options.append('bmi')
 	data['bmi'] = df['BMI']
-if 'fcr' in sys.argv:
-	options.append('femoral coronal rotation')
-	data['FCR'] = df.iloc[:, -1]
-if 'clusters' in sys.argv:
-	N_CLUSTERS = int(sys.argv[sys.argv.index('clusters')+1])
+if 'FTR' in sys.argv:
+	options.append('femoral transverse rotation')
+	data['FTR'] = df.loc[:, 'FTR']
+if 'sex' in sys.argv:
+	data['ismale'] = df.loc[:, 'sex_0']
+	data['isfemale'] = df.loc[:, 'sex_1']
+	options.append('sex')
+if 'nclusters' in sys.argv:
+	N_CLUSTERS = int(sys.argv[sys.argv.index('nclusters')+1])
 	options[0] = f'n_clusters={N_CLUSTERS}'
 
-# Remove the non-preop data from the clustering
-#preop = data.drop(labels=["Planned aHKA (Varus < -2º, Valgus > 2º)", "Planned JLO (Apex Proximal > 183º, Apex Distal < 177º)"], axis=1)
-preop=data
+
 colors = ['black', 'blue', 'red', 'green', 'grey', 'brown']
 
 # STANDARDIZE with the Standard Scalar
 # https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html
 scalar = StandardScaler()
-norm_data = scalar.fit_transform(preop)
+norm_data = scalar.fit_transform(data)
 
 # get data from the kmeans
 kmeans = KMeans(n_clusters=N_CLUSTERS, max_iter=1000)
@@ -95,5 +98,6 @@ ax[1][0].set_title("Pre-Op to Post-Op Alignment")
 ax[1][1].set_title("Average Pre-Op to Post-Op Alignment")
 fig.suptitle("Clusters of Pre-Op and Post-Op Morphologies with KMeans\n"+
 			 "["+', '.join(options) + ']')
-plt.savefig('writeup_tex/clusters.png')
+if 'save' in sys.argv:
+	plt.savefig('writeup_tex/clusters.png')
 plt.show()

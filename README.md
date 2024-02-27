@@ -28,7 +28,7 @@ However, if you have the `mako_data.xlsx` file, drop that in `raw`.
    ```
    python3 data_viz.py
    ```
-5. Create a data clustering example (optional command line options are `nclusters <int>`, `bmi`, `age`, `FCR`):
+5. Create a data clustering example (optional command line options are `nclusters <int>`, `bmi`, `age`, `FTR` for femoral transverse rotation, `sex`):
    ```
    python3 make_clusters.py
    ```
