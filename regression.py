@@ -47,7 +47,7 @@ def test_model(fit_model, model_name, testset, trainset, x_data, three_d=False):
 
 	print(f"Mean Squared Error for {model_name}: {error}")
 	print(f"Mean Squared Error for {model_name} on training data: {error_train}")
-	print(f"Score: {fit_model.score(testset[0], testset[1])}")
+	print(f"R2 Score: {fit_model.score(testset[0], testset[1])}")
 
 	#print(np.append(X_train, X_test))
 	
@@ -82,6 +82,20 @@ def test_model(fit_model, model_name, testset, trainset, x_data, three_d=False):
 	plt.savefig('writeup_tex/'+f'{model_name}'.replace(' ','_') +'_regression.png')
 	plt.show()
 	plt.close()
+
+	# plot error with respect to the Preoperative aHKA
+
+	errors = (dt1['y']-dt1['y_pred'])**2
+	dt1['errors'] = errors
+	print(dt1)
+
+	plt.scatter(dt1['x'], dt1['errors'])
+	std=dt1['errors'].std()
+	mean=dt1['errors'].mean()
+	plt.title('Error Distribution for MLP Regression')
+	plt.xlabel('Pre-op aHKA')
+	plt.ylabel('Squared Error')
+	plt.show()
 	
 
 
@@ -115,10 +129,22 @@ def do_mlp(train=True):
 		pickle.dump(best, open('neural_network.h5', 'wb'))
 	else:
 		if 'neural_network.h5' not in os.listdir():
-			do_mlp()
+			print("Couldn't find pretrained model of name 'neural_network.h5', training anyways")
+			do_mlp(train=True)
+			exit()
 		else:
 			best=pickle.load(open('neural_network.h5', 'rb'))
-		
+	
+	# get the mean squared error, mean absolute error, and root mean squared error over time
+	loss = np.array(best.loss_curve_)
+	epoch = np.arange(1, loss.shape[0]+1, 1)
+	plt.plot(epoch, loss)
+	plt.title("MLP Regressor Loss Curve")
+	plt.xlabel("Epoch")
+	plt.ylabel("Mean Squared Error")
+	plt.tight_layout()
+	plt.show()
+
 	test_model(best, 
 			"neural network",
 				testset=(X_test_normalized, y_test),
@@ -129,20 +155,15 @@ def do_mlp(train=True):
 # Support Vector Machine model
 def do_svm(train=True):
 	if train:
-		parameters = {'kernel':('linear', 'rbf'),
-					'degree': [2, 3, 4],
-					'C':[1, .5, .1], 'gamma':[1, .1, .01, .001, .0001]}
-		svr = NuSVR()
-		clf = GridSearchCV(svr, parameters)
-		clf.fit(X_train_scalar, y_train)
-		best = clf.best_estimator_
 		pickle.dump(best, open('support_vector_machine.h5', 'wb'))
 	else:
 		if 'support_vector_machine.h5' not in os.listdir():
-			do_svm()
+			print("Couldn't find pretrained model of name 'support_vector_machine.h5', training anyways")
+			do_svm(train=True)
+			exit()
 		else:
 			best=pickle.load(open('support_vector_machine.h5', 'rb'))
-	
+
 	test_model(best,
 			"svm",
 				testset=(X_test_scalar, y_test),
@@ -163,7 +184,7 @@ def do_gaus():
 				x_data = X_scalar)
 
 if __name__ == '__main__':
-	do_lin()
-	do_mlp(train=False) # this takes a long time to train (R.I.P. YOUR CPU)
-	do_svm(train=False)
-	#do_gaus()
+	# do_lin()
+	do_mlp(train=False) # training takes a long time to train (R.I.P. YOUR CPU)
+	# do_svm(train=True)
+	# do_gaus()
