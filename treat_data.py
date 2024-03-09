@@ -106,6 +106,11 @@ out['BMI']= bmi
 #==================== add femoral transverse rotation =====================
 
 out = out.join(df.loc[:, 'Femoral Rotation: Transverse (External = +, Internal = -) (degrees)'].dropna(), how='inner')
+out.rename(columns={'Femoral Rotation: Transverse (External = +, Internal = -) (degrees)': 'FTR'}, inplace=True)
+
+#================ add sex ======================
+sex = pd.get_dummies(df.loc[:, 'Sex (1=female,0=male)'], prefix='sex', dtype=float)
+out = out.join(sex, how='inner')
 
 #================ save to csv ======================
 

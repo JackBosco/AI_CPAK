@@ -28,7 +28,20 @@ However, if you have the `mako_data.xlsx` file, drop that in `raw`.
    ```
    python3 data_viz.py
    ```
+5. Create a data clustering example (optional command line options are `nclusters <int>`, `bmi`, `age`, `FTR` for femoral transverse rotation, `sex`):
+   ```
+   python3 make_clusters.py
+   ```
 5. Create and visualize a regression model for planned aHKA
    ```
    python3 regression.py
    ```
+
+### Config options
+
+Configure the date file locations in `config.py`:
+ - `raw_path` is the path to the raw data
+ - `treated_path` is the path to the treated data
+
+Of course, if the files are not there the program will just crash.
+I also cannot privide the files in this repo due to compliance reasons, though please reach out to me if you would like to run this on your own dataset.
