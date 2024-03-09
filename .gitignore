@@ -130,12 +130,13 @@ dmypy.json
 .pyre/
 
 #data
-raw/*
-!raw/readme.md
-treated/*
-!treated/readme.md
+**/raw/*
+!**/raw/README.md
+**/treated/*
+!**/treated/README.md
 related_works/**/.pdf
 .vscode/
+.DS_Store
 
 # saved models
 **/*.h5
@@ -145,3 +146,5 @@ writeup_tex/*
 #except the tex code and output PDF
 !writeup_tex/writeup.tex
 !writeup_tex/writeup.pdf
+!writeup_tex/*.png
+!writeup_tex/*.jpg
