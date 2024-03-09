@@ -87,7 +87,6 @@ def test_model(fit_model, model_name, testset, trainset, x_data, three_d=False):
 
 	errors = (dt1['y']-dt1['y_pred'])**2
 	dt1['errors'] = errors
-	print(dt1)
 
 	plt.scatter(dt1['x'], dt1['errors'])
 	std=dt1['errors'].std()
