@@ -48,8 +48,6 @@ def test_model(fit_model, model_name, testset, trainset, x_data, three_d=False):
 	print(f"Mean Squared Error for {model_name}: {error}")
 	print(f"Mean Squared Error for {model_name} on training data: {error_train}")
 	print(f"R2 Score: {fit_model.score(testset[0], testset[1])}")
-
-	#print(np.append(X_train, X_test))
 	
 	dt = pd.DataFrame({'0':np.array(X_test.iloc[:, 0]),'1':pd.Series(y_pred), '2':np.array(y_test)})
 	dt2 = pd.DataFrame({'0':X_train.iloc[:, 0],'1':pd.Series(y_pred_train), '2':pd.Series(y_train)})
@@ -83,19 +81,35 @@ def test_model(fit_model, model_name, testset, trainset, x_data, three_d=False):
 	plt.show()
 	plt.close()
 
-	# plot error with respect to the Preoperative aHKA
-
-	errors = (dt1['y']-dt1['y_pred'])**2
+	errors = (dt1['y']-dt1['y_pred'])
 	dt1['errors'] = errors
+	def show_flat(x_ax, xlbl):
+		"""
+		Transforms data points to their difference from the regression, flattening the curve
+		"""
+		plt.scatter(dt1[x_ax], dt1['errors'])
+		plt.title('Error Distribution for MLP Regression')
+		plt.xlabel(xlbl)
+		plt.ylabel('Predicted - Actual Post-op aHKA')
+		plt.axhline(y=0, color='red', label='Regression Line of Best Fit')
+		plt.legend()
+		plt.show()
+		plt.close()
 
-	plt.scatter(dt1['x'], dt1['errors'])
-	std=dt1['errors'].std()
-	mean=dt1['errors'].mean()
-	plt.title('Error Distribution for MLP Regression')
-	plt.xlabel('Pre-op aHKA')
-	plt.ylabel('Squared Error')
-	plt.show()
-	
+	# plot error with respect to the Preoperative aHKA
+	show_flat('x', 'Pre-op aHKA')
+
+	# plot the error with respect to Femoral Rotation: Transverse (External = +, Internal = -) (degrees)
+	dt1['FTA'] = df['Femoral Rotation: Transverse (External = +, Internal = -) (degrees)']
+	show_flat('FTA', 'Pre-op Femoral Transverse Rotation')
+
+	# plot the error with respect to BMI
+	dt1['BMI'] = df['BMI']
+	show_flat('BMI', 'Patient BMI')
+
+	# plot the error with respect to Age at Surgery
+	dt1['Age'] = df['Age at Surgery']
+	show_flat('Age', 'Patient Age')	
 
 
 def do_lin():
