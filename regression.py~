@@ -136,9 +136,7 @@ def do_mlp(train=True):
 		clf = GridSearchCV(mlp, {'hidden_layer_sizes': [(5,), (10,), (20,), (30,)],
 								'max_iter': [1000, 2000, 3000],
 								'solver': ['sgd', 'adam'],
-								'activation': ['tanh'],
-								'batch_size': [10]#[10, 20, 100, 200, 300]
-								})
+								'activation': ['tanh']})
 		clf.fit(X_train_normalized, y_train)
 		best = clf.best_estimator_
 		pickle.dump(best, open('neural_network.h5', 'wb'))
@@ -153,15 +151,9 @@ def do_mlp(train=True):
 	# get the mean squared error, mean absolute error, and root mean squared error over time
 	loss = np.array(best.loss_curve_)
 	epoch = np.arange(1, loss.shape[0]+1, 1)
-	s=''
-	for i, (k, v) in enumerate(zip(best.get_params().keys(), best.get_params().values())):
-		s+=f'{k:<20} : {str(v):<20}'
-		if (i+1)%3==0:
-			print(s)
-			s=''
 	plt.plot(epoch, loss)
 	plt.title("MLP Regressor Loss Curve")
-	plt.xlabel("Training Epoch")
+	plt.xlabel("Epoch")
 	plt.ylabel("Mean Squared Error")
 	plt.tight_layout()
 	plt.show()
