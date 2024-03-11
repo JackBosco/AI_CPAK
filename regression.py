@@ -90,7 +90,7 @@ def test_model(fit_model, model_name, testset, trainset, x_data, three_d=False):
 		plt.scatter(dt1[x_ax], dt1['errors'])
 		plt.title('Error Distribution for MLP Regression')
 		plt.xlabel(xlbl)
-		plt.ylabel('Predicted - Actual Post-op aHKA')
+		plt.ylabel('Error (Actual-Predicted) Postop aHKA')
 		plt.axhline(y=0, color='red', label='Regression Line of Best Fit')
 		plt.legend()
 		plt.show()
@@ -100,7 +100,7 @@ def test_model(fit_model, model_name, testset, trainset, x_data, three_d=False):
 	show_flat('x', 'Pre-op aHKA')
 
 	# plot the error with respect to Femoral Rotation: Transverse (External = +, Internal = -) (degrees)
-	dt1['FTA'] = df['Femoral Rotation: Transverse (External = +, Internal = -) (degrees)']
+	dt1['FTA'] = df['FTR']
 	show_flat('FTA', 'Pre-op Femoral Transverse Rotation')
 
 	# plot the error with respect to BMI
