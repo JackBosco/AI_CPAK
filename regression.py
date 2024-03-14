@@ -18,8 +18,8 @@ import numpy as np
 
 # read in the data, split into X and y
 df = pd.read_csv(config.treated_path, index_col=0)
-X = df.iloc[:, [0]] #1, 6, 7, 8]] # preop hka, preop jlo, age, bmi, femoral transverse rotation
-y = df.iloc[:, 2] # planned hka
+X = df.loc[:, ['Pre-op mpta', 'Pre-op ldfa']] #1, 6, 7, 8]] # preop hka, preop jlo, age, bmi, femoral transverse rotation
+y = df.loc[:, ['Planned MPTA', 'Planned LDFA']] # planned hka
 
 # split into training and testing data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42) # 75% training, 25% testing, 42 is the answer to everything
@@ -32,33 +32,45 @@ X_scalar = scaler.transform(X)
 
 # normalize the data with min-max scaling
 normalizer = MinMaxScaler(feature_range=(-1, 1))
+
 X_train_normalized = normalizer.fit_transform(X_train)
 X_test_normalized = normalizer.transform(X_test)
 X_normalized = normalizer.transform(X)
 
-def test_model(fit_model, model_name, testset, trainset, x_data, three_d=False):
-	
-	y_pred = fit_model.predict(testset[0])
-	y_pred_train = fit_model.predict(trainset[0])
-	y_pred_all = fit_model.predict(x_data)
 
-	error = mean_squared_error(testset[1], y_pred)
-	error_train = mean_squared_error(trainset[1], y_pred_train)
+def test_model(fit_model, model_name, testset, trainset, x_data):
+
+	y_pred = pd.DataFrame(fit_model.predict(testset[0]))
+	y_pred_train = pd.DataFrame(fit_model.predict(trainset[0]))
+	y_pred_all = fit_model.predict(x_data)
+	y_test1, y_train1 = pd.DataFrame(y_test.iloc[:, 0] - y_test.iloc[:, 1]), pd.DataFrame(y_train.iloc[:, 0] - y_train.iloc[:, 1])
+
+	# turn the data from MPTA and LDFA to aHKA
+	X_test1 = X_test.iloc[:, 0] - X_test.iloc[:, 1]
+	X_train1 = X_train.iloc[:, 0] - X_train.iloc[:, 1]
+	X1 = X.iloc[:, 0] - X.iloc[:, 1]
+	y_pred1 = y_pred.iloc[:, 0] - y_pred.iloc[:, 1]
+	y_pred_train1 = y_pred_train.iloc[:, 0] - y_pred_train.iloc[:, 1]
+	#y_pred_all1 = y_pred_all.iloc[:, 0] - y_pred_all.iloc[:, 1]
+	y1 = y.iloc[:, 0] - y.iloc[:, 1]
+
+	error = mean_squared_error(y_test1, y_pred1)
+	error_train = mean_squared_error(y_train1, y_pred_train1)
 
 	print(f"Mean Squared Error for {model_name}: {error}")
 	print(f"Mean Squared Error for {model_name} on training data: {error_train}")
 	print(f"R2 Score: {fit_model.score(testset[0], testset[1])}")
 	
-	dt = pd.DataFrame({'0':np.array(X_test.iloc[:, 0]),'1':pd.Series(y_pred), '2':np.array(y_test)})
-	dt2 = pd.DataFrame({'0':X_train.iloc[:, 0],'1':pd.Series(y_pred_train), '2':pd.Series(y_train)})
-	dt1 = pd.DataFrame({'x':X.iloc[:, 0], 'y':y, 'y_pred':y_pred_all})
+	dt = pd.DataFrame({'0':X_test1,'1':y_pred1, '2':y_test1.iloc[:, 0]})
+	dt2 = pd.DataFrame({'0':X_train1,'1':y_pred_train1, '2':y_train1.iloc[:, 0]})
+	dt1 = pd.DataFrame({'x':X1, 'y':y1, 'y_pred':y_pred_all[:, 0]-y_pred_all[:, 1]})
 	dt.sort_values(by='0', inplace=True)
 	dt1.sort_values(by='x', inplace=True)
 	dt2.sort_values(by='0', inplace=True)
 
 	# plot the training data
-	plt.scatter(x=X_train, y=y_train, color='blue', label='Training Samples')
-	plt.scatter(x=X_test, y=y_test, color='black', label='Testing Samples')
+	plt.scatter(x=X_train1, y=y_train1, color='blue', label='Training Samples')
+	plt.scatter(x=X_test1, y=y_test1, color='black', label='Testing Samples')
 
 	# plot the line of best fit
 	plt.plot(dt1.loc[:, 'x'], dt1.loc[:, 'y_pred'], color='red', label='Regression Line of Best Fit')
@@ -133,22 +145,25 @@ def do_lin():
 def do_mlp(train=True):
 	if train:
 		mlp = MLPRegressor()
-		clf = GridSearchCV(mlp, {'hidden_layer_sizes': [(5,), (10,), (20,), (30,)],
-								'max_iter': [1000, 2000, 3000],
-								'solver': ['sgd', 'adam'],
+		clf = GridSearchCV(mlp, {'hidden_layer_sizes': [(30,), (16,)],
+								'max_iter': [2000, 1000],
+								'solver': ['sgd'],
 								'activation': ['tanh'],
-								'batch_size': [10]#[10, 20, 100, 200, 300]
+								'batch_size': [20, 10, 30],
+								'learning_rate': ['constant'],
+								'early_stopping':[False],
+								'validation_fraction':[0.1, 0.05]
 								})
 		clf.fit(X_train_normalized, y_train)
 		best = clf.best_estimator_
-		pickle.dump(best, open('neural_network.h5', 'wb'))
+		pickle.dump(best, open('neural_network_4.h5', 'wb'))
 	else:
-		if 'neural_network.h5' not in os.listdir():
+		if 'neural_network_4.h5' not in os.listdir():
 			print("Couldn't find pretrained model of name 'neural_network.h5', training anyways")
 			do_mlp(train=True)
 			exit()
 		else:
-			best=pickle.load(open('neural_network.h5', 'rb'))
+			best=pickle.load(open('neural_network_4.h5', 'rb'))
 	
 	# get the mean squared error, mean absolute error, and root mean squared error over time
 	loss = np.array(best.loss_curve_)
@@ -164,7 +179,8 @@ def do_mlp(train=True):
 	plt.xlabel("Training Epoch")
 	plt.ylabel("Mean Squared Error")
 	plt.tight_layout()
-	plt.show()
+	#plt.show()
+	plt.close()
 
 	test_model(best, 
 			"neural network",
@@ -176,6 +192,14 @@ def do_mlp(train=True):
 # Support Vector Machine model
 def do_svm(train=True):
 	if train:
+		svm = NuSVR()
+		clf = GridSearchCV(svm, {'nu': [0.1, 0.3, 0.5, 0.7, 0.9],
+								'kernel': ['rbf', 'sigmoid'],
+								'degree': [2, 3, 4],
+								'gamma': ['scale', 'auto']
+								})
+		clf.fit(X_train_scalar, y_train)
+		best = clf.best_estimator_
 		pickle.dump(best, open('support_vector_machine.h5', 'wb'))
 	else:
 		if 'support_vector_machine.h5' not in os.listdir():
@@ -206,6 +230,6 @@ def do_gaus():
 
 if __name__ == '__main__':
 	# do_lin()
-	do_mlp(train=False) # training takes a long time to train (R.I.P. YOUR CPU)
+	do_mlp(train=True) # training takes a long time to train (R.I.P. YOUR CPU)
 	# do_svm(train=True)
 	# do_gaus()

@@ -84,8 +84,8 @@ planned_vals[planned_headers['mpta']] += 90
 planned_vals[planned_headers['ldfa']] += 90
 
 # add planned ldfa and mpta to output
-out[planned_headers['ldfa']] = summary[planned_headers['ldfa']]
-out[planned_headers['mpta']] = summary[planned_headers['mpta']]
+out[planned_headers['ldfa']] = 90 + summary[planned_headers['ldfa']]
+out[planned_headers['mpta']] = 90 - summary[planned_headers['mpta']]
 
 #hka, jlo for post-op
 #aHKA = MPTA - LDFA
