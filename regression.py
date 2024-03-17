@@ -36,6 +36,7 @@ normalizer = MinMaxScaler(feature_range=(-1, 1))
 X_train_normalized = normalizer.fit_transform(X_train)
 X_test_normalized = normalizer.transform(X_test)
 X_normalized = normalizer.transform(X)
+pickle.dump(normalizer, open(config.norm_path, 'wb'))
 
 
 def test_model(fit_model, model_name, testset, trainset, x_data):
@@ -230,6 +231,6 @@ def do_gaus():
 
 if __name__ == '__main__':
 	# do_lin()
-	do_mlp(train=True) # training takes a long time to train (R.I.P. YOUR CPU)
+	do_mlp(train=False) # training takes a long time to train (R.I.P. YOUR CPU)
 	# do_svm(train=True)
 	# do_gaus()
