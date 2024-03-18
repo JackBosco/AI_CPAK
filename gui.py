@@ -60,6 +60,7 @@ class NYUMethodGUI(EasyFrame):
 
 		# data normalizer
 		self.normalizer=pickle.load(open(config.norm_path, 'rb'))
+		self.denormalizer=pickle.load(open(config.de_norm_path, 'rb'))
 
 		# pre-trained model
 		self.model=pickle.load(open(config.model_path, 'rb'))
@@ -76,6 +77,7 @@ class NYUMethodGUI(EasyFrame):
 
 		inpts = self.normalizer.transform(self.data)
 		preds=self.model.predict(inpts)
+		preds=self.denormalizer.inverse_transform(preds)
 		o_mpta, o_ldfa = preds[-1]
 		self.out_ldfa.setNumber(o_ldfa)
 		self.out_mpta.setNumber(o_mpta)

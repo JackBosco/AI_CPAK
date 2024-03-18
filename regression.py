@@ -32,18 +32,27 @@ X_scalar = scaler.transform(X)
 
 # normalize the data with min-max scaling
 normalizer = MinMaxScaler(feature_range=(-1, 1))
+out_normalizer = MinMaxScaler(feature_range=(-1, 1))
 
 X_train_normalized = normalizer.fit_transform(X_train)
 X_test_normalized = normalizer.transform(X_test)
 X_normalized = normalizer.transform(X)
+y_train_norm = out_normalizer.fit_transform(y_train)
+y_test_norm = out_normalizer.transform(y_test)
+y_norm = out_normalizer.transform(y)
+
 pickle.dump(normalizer, open(config.norm_path, 'wb'))
+pickle.dump(out_normalizer, open(config.de_norm_path, 'wb'))
 
 
-def test_model(fit_model, model_name, testset, trainset, x_data):
+def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_normalizer):
 
-	y_pred = pd.DataFrame(fit_model.predict(testset[0]))
-	y_pred_train = pd.DataFrame(fit_model.predict(trainset[0]))
+	y_pred = fit_model.predict(testset[0])
+	y_pred = pd.DataFrame(norm1.inverse_transform(y_pred))
+	y_pred_train = fit_model.predict(trainset[0])
+	y_pred_train = pd.DataFrame(norm1.inverse_transform(y_pred_train))
 	y_pred_all = fit_model.predict(x_data)
+	y_pred_all = norm1.inverse_transform(y_pred_all)
 	y_test1, y_train1 = pd.DataFrame(y_test.iloc[:, 0] - y_test.iloc[:, 1]), pd.DataFrame(y_train.iloc[:, 0] - y_train.iloc[:, 1])
 
 	# turn the data from MPTA and LDFA to aHKA
@@ -110,19 +119,19 @@ def test_model(fit_model, model_name, testset, trainset, x_data):
 		plt.close()
 
 	# plot error with respect to the Preoperative aHKA
-	show_flat('x', 'Pre-op aHKA')
+	#show_flat('x', 'Pre-op aHKA')
 
 	# plot the error with respect to Femoral Rotation: Transverse (External = +, Internal = -) (degrees)
 	dt1['FTA'] = df['FTR']
-	show_flat('FTA', 'Pre-op Femoral Transverse Rotation')
+	#show_flat('FTA', 'Pre-op Femoral Transverse Rotation')
 
 	# plot the error with respect to BMI
 	dt1['BMI'] = df['BMI']
-	show_flat('BMI', 'Patient BMI')
+	#show_flat('BMI', 'Patient BMI')
 
 	# plot the error with respect to Age at Surgery
 	dt1['Age'] = df['Age at Surgery']
-	show_flat('Age', 'Patient Age')	
+	#show_flat('Age', 'Patient Age')	
 
 
 def do_lin():
@@ -146,25 +155,29 @@ def do_lin():
 def do_mlp(train=True):
 	if train:
 		mlp = MLPRegressor()
-		clf = GridSearchCV(mlp, {'hidden_layer_sizes': [(30,), (16,)],
-								'max_iter': [2000, 1000],
-								'solver': ['sgd'],
-								'activation': ['tanh'],
-								'batch_size': [20, 10, 30],
-								'learning_rate': ['constant'],
-								'early_stopping':[False],
-								'validation_fraction':[0.1, 0.05]
+		clf = GridSearchCV(mlp, {'hidden_layer_sizes': [(16), (16,8,4)], #(16, 8, 4)
+								'max_iter': [2000, 1000], #2000
+								'solver': ['sgd'], #sgd
+								'activation': ['tanh'], #tanh
+								'batch_size': [4,8], #4
+								'learning_rate': ['adaptive'], #'adaptive'
+								'early_stopping':[False], #False
+								'validation_fraction':[0.05] #0.05
 								})
-		clf.fit(X_train_normalized, y_train)
+		clf.fit(X_train_normalized, y_train_norm)
 		best = clf.best_estimator_
-		pickle.dump(best, open('neural_network_4.h5', 'wb'))
+		i, st = 0, 'neural_network'
+		while st+str(i)+'.h5' in os.listdir():
+			i+=1
+		st+=str(i)+'.h5'
+		pickle.dump(best, open(st, 'wb'))
 	else:
-		if 'neural_network_4.h5' not in os.listdir():
+		if 'neural_network.h5' not in os.listdir():
 			print("Couldn't find pretrained model of name 'neural_network.h5', training anyways")
 			do_mlp(train=True)
 			exit()
 		else:
-			best=pickle.load(open('neural_network_4.h5', 'rb'))
+			best=pickle.load(open('neural_network.h5', 'rb'))
 	
 	# get the mean squared error, mean absolute error, and root mean squared error over time
 	loss = np.array(best.loss_curve_)
@@ -180,13 +193,13 @@ def do_mlp(train=True):
 	plt.xlabel("Training Epoch")
 	plt.ylabel("Mean Squared Error")
 	plt.tight_layout()
-	#plt.show()
+	plt.show()
 	plt.close()
 
 	test_model(best, 
 			"neural network",
-				testset=(X_test_normalized, y_test),
-				trainset=(X_train_normalized, y_train),
+				testset=(X_test_normalized, y_test_norm),
+				trainset=(X_train_normalized, y_train_norm),
 				x_data = X_normalized)
 
 
