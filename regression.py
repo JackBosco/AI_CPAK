@@ -155,14 +155,15 @@ def do_lin():
 def do_mlp(train=True):
 	if train:
 		mlp = MLPRegressor()
-		clf = GridSearchCV(mlp, {'hidden_layer_sizes': [(16), (16,8,4)], #(16, 8, 4)
-								'max_iter': [2000, 1000], #2000
+		clf = GridSearchCV(mlp, {'hidden_layer_sizes': [(16,8,4)], #(16, 8, 4)
+								'max_iter': [2000], #2000
 								'solver': ['sgd'], #sgd
 								'activation': ['tanh'], #tanh
-								'batch_size': [4,8], #4
+								'batch_size': [4], #4
 								'learning_rate': ['adaptive'], #'adaptive'
 								'early_stopping':[False], #False
-								'validation_fraction':[0.05] #0.05
+								'validation_fraction':[0.05], #0.05
+								'random_state': [42]
 								})
 		clf.fit(X_train_normalized, y_train_norm)
 		best = clf.best_estimator_
