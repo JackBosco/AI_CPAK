@@ -78,6 +78,14 @@ def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_norma
 	dt1.sort_values(by='x', inplace=True)
 	dt2.sort_values(by='0', inplace=True)
 
+	# get more error statistics
+	errors = (dt1['y']-dt1['y_pred'])
+	dt1['errors'] = errors
+	rmse=np.sqrt((dt1['errors']**2).mean())
+	print("Root Mean Squared Error for dataset:", rmse)
+	nash_sutcliffe=1-(rmse/dt1['y'].std())**2
+	print("Nash Sutcliffe Score:", nash_sutcliffe)
+
 	# plot the training data
 	plt.scatter(x=X_train1, y=y_train1, color='blue', label='Training Samples')
 	plt.scatter(x=X_test1, y=y_test1, color='black', label='Testing Samples')
@@ -99,12 +107,11 @@ def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_norma
 	plt.xlabel('Pre-op aHKA')
 	plt.ylabel('Planned aHKA')
 	plt.legend()
-	plt.savefig('writeup_tex/'+f'{model_name}'.replace(' ','_') +'_regression.png')
-	plt.show()
+	#plt.savefig('writeup_tex/'+f'{model_name}'.replace(' ','_') +'_regression.png')
+	#plt.show()
 	plt.close()
 
-	errors = (dt1['y']-dt1['y_pred'])
-	dt1['errors'] = errors
+	
 	def show_flat(x_ax, xlbl):
 		"""
 		Transforms data points to their difference from the regression, flattening the curve
