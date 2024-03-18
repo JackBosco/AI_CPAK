@@ -1,0 +1,12 @@
+Report on outliers,
+Standard deviation, 
+descriptive statistics (etc.)
+
+Discussion: similar to introduction
+
+Results: What do these regressions mean
+
+Math thing in the introduction
+
+Divide the data into 6 seperate figures
+	label figures
