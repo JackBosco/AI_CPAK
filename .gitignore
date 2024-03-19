@@ -159,3 +159,7 @@ writeup_tex/svm_regression.png
 writeup_tex/linear_regression.png
 
 related_works/*
+notes/*
+algo.txt
+ui.py
+3dvis.py
