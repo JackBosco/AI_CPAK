@@ -154,5 +154,8 @@ writeup_tex/*
 !writeup_tex/*.png
 !writeup_tex/*.jpg
 !writeup_tex/*.bib
+writeup_tex/degree_3_polynomial_regression.png
+writeup_tex/svm_regression.png
+writeup_tex/linear_regression.png
 
 related_works/*
