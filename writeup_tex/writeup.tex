@@ -87,7 +87,7 @@ After fitting, the normalizer coefficients are saved so that individual [MPTA, L
 
 Training
 
-\begin{figure}[h]
+\begin{figure}[ht]
 	\begin{tikzpicture}[x=1.5cm, y=1.5cm, >=stealth]
 		\foreach \m/\l [count=\y] in {1,2}
 		\node [every neuron/.try, neuron \m/.try] (input-\m) at (0,.5-\y) {};
@@ -177,7 +177,7 @@ As the final step, we take the mean squared error between the targets $Y_\text{t
 	
 \section{Results}
 
-\begin{figure}[ht]
+\begin{figure}[h]
 	\begin{subfigure}{.45\linewidth}
 		\includegraphics[width=\linewidth]{data_vis.png}
 		\caption{Pre-op vs. Planned value distributions showing CPAK morpholigies.}
@@ -193,16 +193,23 @@ As the final step, we take the mean squared error between the targets $Y_\text{t
 \end{figure}
 
 Training
-	The model converged early, halting after training for \epochs with a batch size of \batchsize patterns [loss\_curve].
+	The model converged early, halting after training for \epochs with a batch size of \batchsize patterns (Figure \ref{loss_curve}).
 After about \convergence epochs, the mean squared error between normalized input/target patterns begins to converge.
 The model takes less than 1 minute to converge with no GPU, however it is important to note this is with a small training set of 417 patterns.
 Nonetheless, with the simple feed-forward neural net architecture chosen for this model, it is expected that the model will train relatively quickly. 
 
-\begin{figure}[t]
+\begin{figure}[h!]
 	\centering
-	\includegraphics[width=.5\linewidth]{neural_network_regression.png}
+	\includegraphics[width=.65\linewidth]{neural_network_regression.png}
 	\caption{Visualization of the regression line of best fit produced by the MLP model}
 	\label{regression}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=.5\linewidth]{loss_curve.png}
+	\caption{Loss curve for the MLP training. Mean squared error is shown for each epoch (\batchsize \space repitions) from the normalized prediction/target patterns.}
+	\label{loss_curve}
 \end{figure}
 
 Shape
@@ -227,7 +234,7 @@ This demonstrates how the model successfully avoids overfitting so long as there
 
 Moving Forward
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=.5\linewidth]{gui.png}
 	\caption{Graphical User Interface (GUI) with example prediction}
