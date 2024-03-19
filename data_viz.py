@@ -79,7 +79,7 @@ for a in [ax1, ax2]:
 	a.axhline(y=183)
 	a.axvline(x=-2)
 	a.axvline(x=2)
-	a.set_xlabel("aHKA (Varus < -2º, Valgus > 2º)")
+	a.set_xlabel("aHKA")
 	a.set_ylabel("JLO")
 	a.yaxis.label.set_rotation(45)
 

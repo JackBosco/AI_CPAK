@@ -11,6 +11,8 @@
 \usepackage{biblatex}
 \usepackage{amsmath,amssymb}
 \usepackage{subcaption}
+\usepackage{neuralnetwork}
+\usetikzlibrary{positioning}
 
 \addbibresource{sources.bib}
 
@@ -19,6 +21,20 @@ Di Gangi, Catherine; Watson, Cody Ph.D}
 \title{Modeling Robotic Surgery Predictions: Write-Up}
 
 \begin{document}
+
+\tikzset{%
+  every neuron/.style={
+    circle,
+    draw,
+    minimum size=1cm
+  },
+  neuron missing/.style={
+    draw=none, 
+    scale=4,
+    text height=0.333cm,
+    execute at begin node=\color{black}$\vdots$
+  },
+}
 
 \newcommand\epochs{86}
 \newcommand\batchsize{4}
@@ -58,10 +74,11 @@ The MPTA measurement is a representation of the tibial coronal alignment such th
 and the equations $\text{aHKA}=\text{MPTA}-\text{LDFA}$ and $\text{JLO}=\text{MPTA}+\text{LDFA}$ satisfy the CPAK morphologies defined by \cite{cpak-paper}.
 Similarly, the LDFA measurement is a representation of the femoral coronal alignment such that perfectly aligned femoral coronal angles map to 90°
 and the equations $\text{aHKA}=\text{MPTA}-\text{LDFA}$ and $\text{JLO}=\text{MPTA}+\text{LDFA}$ give the CPAK morphologies defined by MacDessi et. al.\cite{cpak-paper}.
-For the input space $X$, pre-operative MPTA and LDFA angles are combined into vectors $x_i=[\text{preopMPTA}_i, \text{preopLDFA}_i]$
-where $i$ denotes the REDCAP ID number. The same is done for the output space $Y: y_i=[plannedMPTA_i, plannedLDFA_i]$.
+For the input space $X$, pre-operative MPTA and LDFA angles are combined into vectors $x_i=[\text{preop MPTA}_i, \text{preop LDFA}_i]$
+where $i$ denotes the REDCAP ID number. The same is done for the output space $Y: y_i=[\text{planned MPTA}_i, \text{planned LDFA}_i]$.
 To train and evaluate the model, we split the input and output data into testing, training and validation sets of sizes 30\%, 66.5\% and 3.5\% respectively.
 Each split contains an equal number of pre-op and planned values, linked by case through the REDCAP ID.
+
 	Next, two normalizers are defined: $\text{norm}_Y$ and $\text{norm}_Y$.
 They use the min max scaler algorithm defined in the scikit-learn library \cite{scikit-learn} to normalize the values of the input and output
 by scaling them within the range [-1, 1].
@@ -69,11 +86,69 @@ $\text{norm}_x$ is fitted to the training subset of $X$, $norm_Y$ is fitted to t
 After fitting, the normalizer coefficients are saved so that individual [MPTA, LDFA] samples can be normalized and de-normalized deterministically.
 
 Training
-	
+
+\begin{figure}[h]
+	\begin{tikzpicture}[x=1.5cm, y=1.5cm, >=stealth]
+		\foreach \m/\l [count=\y] in {1,2}
+		\node [every neuron/.try, neuron \m/.try] (input-\m) at (0,.5-\y) {};
+
+		\foreach \m [count=\y] in {1,2,missing,3}
+		\node [every neuron/.try, neuron \m/.try ] (hidden1-\m) at (2,2-\y*1.25) {};
+
+		\foreach \m [count=\y] in {1,2,missing,3}
+		\node [every neuron/.try, neuron \m/.try ] (hidden2-\m) at (4,2-\y*1.25) {};
+
+		\foreach \m [count=\y] in {1,2,missing,3}
+		\node [every neuron/.try, neuron \m/.try ] (hidden3-\m) at (6,2-\y*1.25) {};
+
+		\foreach \m [count=\y] in {1,2}
+		\node [every neuron/.try, neuron \m/.try ] (output-\m) at (8,.5-\y) {};
+
+		\draw [<-] (input-1) -- ++(-1,0) node [above, midway] {MPTA};
+		\draw [<-] (input-2) -- ++(-1,0) node [above, midway] {LDFA};
+
+		\foreach \j in {1,2,3}{
+			\foreach \l [count=\i] in {1,2}
+			\node [above] at (hidden\j-\i.north) {$H_{\j,\l}$};
+		}
+		\node [above] at (hidden1-3.north) {$H_{1,16}$};
+		\node [above] at (hidden2-3.north) {$H_{2,8}$};
+		\node [above] at (hidden3-3.north) {$H_{3,4}$};
+
+		\draw [->] (output-1) -- ++(1,0) node [above, right] {Planned MPTA};
+		\draw [->] (output-2) -- ++(1,0) node [above, right] {Planned LDFA};
+
+		\foreach \i in {1,...,2}{
+			\foreach \j in {1,...,3}
+				\draw [->] (input-\i) -- (hidden1-\j);
+		}
+
+		\foreach \i in {1,...,3}{
+			\foreach \j in {1,...,3}
+				\draw [->] (hidden1-\i) -- (hidden2-\j);
+		}
+		
+		\foreach \i in {1,...,3}{
+			\foreach \j in {1,...,3}
+				\draw [->] (hidden2-\i) -- (hidden3-\j);
+		}
+
+		\foreach \i in {1,...,3}
+		\foreach \j in {1,...,2}
+			\draw [->] (hidden3-\i) -- (output-\j);
+
+		\foreach \l [count=\x from 0] in {Input, Hidden, Hidden, Hiden, Ouput}
+		\node [align=center, above] at (\x*2,2) {\l \\ layer};
+
+	\end{tikzpicture}
+	\caption{Diagram of the MLP model architecture}
+	\label{fig:mlp_diagram}
+\end{figure}
+
 	For the NYU method a multilayer perceptron (MLP) model, also known as a neural network, is trained to determine the regression line of best fit \cite{mlp-paper}.
 An MLP architecture for the model was chosen based on the following factors: the size of the dataset, the input dimensions and the output dimensions.
 Since the size of the dataset is small (626 cases), a more robust deep learning architecture is not an option.
-The MLP architecture we used had three hidden layers of sizes 16, 8 and 4 [mlp\_diagram],
+The MLP architecture we used had three hidden layers of sizes 16, 8 and 4 (Figure \ref{fig:mlp_diagram}),
 making it large enough to learn feature representations of the input and small enough to converge on a small sample size \cite{deep-learning-paper}.
 We used stochastic gradient descent as the optimizer, set the random seed to 42, and used hyperbolic tangent as our activation function since its range (-1,1)
 fits well within the range of the normalizer [-1,1] \cite{sgd-paper, mlp-paper}.
@@ -102,32 +177,68 @@ As the final step, we take the mean squared error between the targets $Y_\text{t
 	
 \section{Results}
 
+\begin{figure}[ht]
+	\begin{subfigure}{.45\linewidth}
+		\includegraphics[width=\linewidth]{data_vis.png}
+		\caption{Pre-op vs. Planned value distributions showing CPAK morpholigies.}
+		\label{data_vis}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.45\linewidth}
+		\includegraphics[width=\linewidth]{avg_vis.png}
+		\caption{Average change from pre-op to planning stage by aHKA morphology}
+		\label{avg_vis}
+	\end{subfigure}
+	\caption{Visualization of dataset}
+\end{figure}
+
 Training
 	The model converged early, halting after training for \epochs with a batch size of \batchsize patterns [loss\_curve].
 After about \convergence epochs, the mean squared error between normalized input/target patterns begins to converge.
 The model takes less than 1 minute to converge with no GPU, however it is important to note this is with a small training set of 417 patterns.
 Nonetheless, with the simple feed-forward neural net architecture chosen for this model, it is expected that the model will train relatively quickly. 
 
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=.5\linewidth]{neural_network_regression.png}
+	\caption{Visualization of the regression line of best fit produced by the MLP model}
+	\label{regression}
+\end{figure}
+
 Shape
+
 	The regression this model produces is in-line with the hypothesized change in pre-op to planned aHKA.
-In [data-vis], the pre-operative and post-operative aHKA and JLO values from the initial dataset are shown.
+In Figure \ref{data_vis}, the pre-operative and post-operative aHKA and JLO values from the initial dataset are shown.
 The pre-operative values were more varied than their planned counterparts and the vertical and horizontal bars separate the different knee alignment morphologies \cite{cpak-paper}.
-Splitting the pre-operative values by aHKA into varus, valgus and aligned groups, we can view the average change for each group from pre-op to planning stage [data-vis-changes].
+Splitting the pre-operative values by aHKA into varus, valgus and aligned groups, we can view the average change for each group from pre-op to planning stage (Figure \ref{avg_vis}).
 For each group, the JLO tends to move in the same direction. More interestingly, however, is the way aHKA changes by group: 
 on average, varus morphologies tend to stay varus and aligned morphologies tend to stay aligned but valgus morphologies are planned to be corrected to aligned morphologies.
-Looking at the regression produced from the model [regression], we see the same pattern.
+Looking at the regression produced from the model (Figure \ref{regression}), we see the same pattern.
 Blue dots represent the training and validation set while block dots represent the testing set.
 The middle-left square is hardly intersected by the regression, indicating the model rarely predicts aligned morphologies from varus morphologies.
 The middle-right square is intersected by the regression, however, indicating the model sometimes predicts aligned morephologies from valgus morphologies.
 
 Accuracy
+
 	Evaluative statistics demonstrate the NYU method for planning knee morphologies is more accurate than making predictions about the mean
 (RMSE \mse; Nash Sutcliffe \ns) \cite{goodness-of-fit}. 
-As the regression [regression] moves towards more densely populated regions of the scatter plot, the line of best straightens out.
+As the regression (Figure \ref{regression}) moves towards more densely populated regions of the scatter plot, the line of best straightens out.
 This demonstrates how the model successfully avoids overfitting so long as there are enough examples in the dataset.
 
 Moving Forward
-	More work needs to be done to evaluate the NYU methods usefulness for planning robotic TKR in the field. Included in this study is a codebase from which the model can be trained if suppliad appropriate data. With a pre-trained model, the NYU method is accessible through a graphical user interface [gui]. The GUI is brought up by running the gui.py script with a pre-trained model in the appropriate folder. With it, the NYU method can be utilized without any code.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=.5\linewidth]{gui.png}
+	\caption{Graphical User Interface (GUI) with example prediction}
+	\label{gui}
+\end{figure}
+
+	More work needs to be done to evaluate the NYU methods usefulness for planning robotic TKR in the field.
+Included in this study is a codebase from which the model can be trained if suppliad appropriate data. With a pre-trained model,
+the NYU method is accessible through a graphical user interface (Figure \ref{gui}).
+The GUI is brought up by running the gui.py script with a pre-trained model in the appropriate folder.
+With it, the NYU method can be utilized without any code.
 
 \medskip
 

@@ -148,3 +148,4 @@ writeup_tex/*
 !writeup_tex/writeup.pdf
 !writeup_tex/*.png
 !writeup_tex/*.jpg
+!writeup_tex/*.bib
