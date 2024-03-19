@@ -155,3 +155,4 @@ writeup_tex/*
 !writeup_tex/*.jpg
 !writeup_tex/*.bib
 
+related_works/*
