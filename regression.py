@@ -100,7 +100,7 @@ def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_norma
 	plt.axhline(y=2)
 
 	# plot the error
-	plt.fill_between(dt1['x'], dt1['y_pred']+error, dt1['y_pred']-error, color='red', alpha=.2, label=f'Error: += {error:.2f}mm')
+	plt.fill_between(dt1['x'], dt1['y_pred']+error, dt1['y_pred']-error, color='red', alpha=.2, label=f'Error: += {error:.2f}°')
 	plt.fill_between(dt1['x'], (dt1['y_pred']+.33*error), (dt1['y_pred']-.33*error), color='red', alpha=.4, label='33% Error')
 	
 	plt.title(f'{model_name} Model Prediction for Planned aHKA from Pre-op aHKA')
@@ -174,18 +174,19 @@ def do_mlp(train=True):
 								})
 		clf.fit(X_train_normalized, y_train_norm)
 		best = clf.best_estimator_
-		i, st = 0, 'neural_network'
-		while st+str(i)+'.h5' in os.listdir():
-			i+=1
-		st+=str(i)+'.h5'
+		if 'mlp.h5' in os.listdir(config.pretrained_path):
+			st = config.pretrained_path + 'mlp0.h5'
+		else:
+			st = config.model_path
 		pickle.dump(best, open(st, 'wb'))
 	else:
-		if 'neural_network.h5' not in os.listdir():
-			print("Couldn't find pretrained model of name 'neural_network.h5', training anyways")
+		try:
+			f = open(config.model_path, 'rb')
+			best=pickle.load(f)
+		except:
+			print(f"Couldn't find pretrained model path {config.model_path}, training anyways")
 			do_mlp(train=True)
 			exit()
-		else:
-			best=pickle.load(open('neural_network.h5', 'rb'))
 	
 	# get the mean squared error, mean absolute error, and root mean squared error over time
 	loss = np.array(best.loss_curve_)
