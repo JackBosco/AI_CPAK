@@ -141,6 +141,11 @@ related_works/**/.pdf
 # saved models
 **/*.h5
 
+# Except essential models
+!data/pretrained/normalizer.h5
+!data/pretrained/denormalizer.h5
+!data/pretrained/mlp.h5
+
 #random latex stuff
 writeup_tex/*
 #except the tex code and output PDF
@@ -149,3 +154,4 @@ writeup_tex/*
 !writeup_tex/*.png
 !writeup_tex/*.jpg
 !writeup_tex/*.bib
+
