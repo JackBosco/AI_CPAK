@@ -20,6 +20,12 @@ Di Gangi, Catherine; Watson, Cody Ph.D}
 
 \begin{document}
 
+\newcommand\epochs{86}
+\newcommand\batchsize{4}
+\newcommand\convergence{6}
+\newcommand\mse{1.819}
+\newcommand\ns{0.587}
+
 \maketitle
 
 \textbf{%
@@ -30,129 +36,98 @@ Document written by Jack Bosco.
 Code for the data analysis, modeling, and visualization are also written by Jack Bosco. 
 }
 
-\section{Introduction}
-
-Coronal Plane Alignment of the Knee (CPAK) morphologies are powerful visualization tools for pre-operative planning in Total Knee Replacement (TKA) cases. \cite{MacDessi2021-mi}
-Dispite this useful metric, there exists no method for to predicting the optimal post-resection alignment based on the pre-operative alignment.
-In this study, we propose the NYU model to predict optimal post-operative aHKA alignement 
-for achieving suitable laxity during a total knee replacement based on the pre-operative aHKA value.
-
-\subsection{Background}
-
-Classification of knee alignment into CPAK morphologies consists of two measurements: the Joint Line Obliquity (JLO) and the anterior Hip Knee Alignment (aHKA).
-Anterior Hip Knee Alignment (aHKA) is the angle between the femoral and tibial mechanical axes in the coronal plane.
-Joint Line Obliquity (JLO) is the angle between the femoral and tibial mechanical axes in the sagittal plane.
-Sections of the CPAK classification allow physicians to envision the alignment of the hip and knee in a 3D space \cite{MacDessi2021-mi}.
-
-\subsection{Motivation} % Can we find a predictive model for implant alignment based on pre-operative deformity
-
-The motivation for this project is to find a predictive model for implant alignment based on pre-operative deformity.
-When in the planning phase for a total knee arthroplasty (TKA), the surgeon must predict the femoral resection amounts 
-(Medial Distal, Lateral Distal, Medial Posterior, Lateral Posterior)
-and the tibial resection amounts 
-(Medial, Lateral)
-most likely to yeild suitable laxity for the implant.
-
-These predictions may be informed by the pre-operative deformity of the knee.
-As aHKA values differ from the mean, alignments are Varus or Valgus according to the following rule ($\alpha=2$):
-
-\[\text{lateral morphology}=
-	\begin{cases}
-		\text{Varus} & \text{if } \text{aHKA} < -\alpha \\
-		\text{Valgus} & \text{if } \text{aHKA} > \alpha \\
-		\text{Aligned} & \text{if } \text{aHKA} \in [-\alpha, \alpha]
-	\end{cases} ^ \text{\cite{MacDessi2021-mi}}
-\]
-
-Dispite the usefulness of this metric, there exists no method for to predicting the optimal post-resection alignment based on the pre-operative alignment.
-In this study, we propose the NYU model to predict optimal post-operative aHKA alignement 
-for achieving suitable laxity during a total knee replacement based on the pre-operative aHKA value.
-
 \section{Methods}
 
-Analysis of pre-operative planning and report screenings from 626 TKR cases was used to build a predictive model
-to approximate optimal post-resection aHKA value based on the pre-operative aHKA value.
-Consecutive records were collected from hospital records and agregated by the senior author into a single dataset.
-The dataset was then cleaned and pre-processed to remove any missing or incomplete data, yeilding 626 complete cases in total (Figure \ref{fig:cpak_ref}).
+Overview
 
-\begin{figure}[ht]
-	\caption{Data Visualization and Clustering}
-	\begin{subfigure}[lt]{.4\textwidth}
-		\includegraphics[width=\linewidth]{data_vis.png}
-		\caption{%
-			\footnotesize
-			These are the averages of the clusters - See CPAK reference.\\
-			Top: Pre and post-op data displayed on a scatterchart of Joint Line Obliquity (JLO) and anterior Hip Knee Alignment (aHKA)\\
-			Bottom: Average Pre and post-op alignment grouped by pre-operative aHKA values.\\
-			The average change from pre-op to post-op is shown.
-			}
-		\label{fig:cpak_ref}
-	\end{subfigure}
-	\begin{subfigure}[rt]{.58\textwidth}
-		\includegraphics[width=\linewidth]{clusters.png}
-		\caption{%
-			\footnotesize
-			Bottom Left: Arrows are drawn for each pre and post-operative pair (one pair per case).\\
-			Bottom Right: Averages are taken for each cluser and the change from pre-op to post-op is shown.
-			}
-		\label{fig:clusters}
-	\end{subfigure}
-\end{figure}
+	Analysis of pre-operative planning and report screenings from 626 TKR cases
+was used to establish the NYU method for approximating optimal post-resection tibial
+and femoral coronal alignments based on the pre-operative tibial and femoral coronal alignments.
+To establish a unified input format, femoral and tibial coronal alignments are translated into MPTA and LDFA measurements, respectively.
+MPTA and LDFA were chosen since they allow for easy computation of aHKA and JLO values to visualize the knee morphology through CPAK classification \cite{cpak-paper}.
+After calculating the measurements, MPTA and LDFA values are fed into a min-max scaler transformation to normalize the input and output values within the range [-1, 1] \cite{mm-norm}.
+The last pretraining step splits the normalized data into testing, training and validation sets of sizes 30\%, 66.5\% and 3.5\% respectively with random seed 42.
+In training the model runs stochastic gradient descent, looping until a maximum number of repetitions is reached or 10 repetitions are completed with no change in error.
+After it is finished training, the model is evaluated using the mean squared error between the de-normalized predicted aHKA and target aHKA values from the testing dataset.
 
+Pre-Processing
 
+	The pre-processing step involves all the actions performed on the raw dataset before the model can be trained.
+In this experiment, tibial and femoral coronal alignments of the knee region are translated into MPTA and LDFA measurements, respectively.
+The MPTA measurement is a representation of the tibial coronal alignment such that perfectly aligned tibial coronal angles map to 90° 
+and the equations $\text{aHKA}=\text{MPTA}-\text{LDFA}$ and $\text{JLO}=\text{MPTA}+\text{LDFA}$ satisfy the CPAK morphologies defined by \cite{cpak-paper}.
+Similarly, the LDFA measurement is a representation of the femoral coronal alignment such that perfectly aligned femoral coronal angles map to 90°
+and the equations $\text{aHKA}=\text{MPTA}-\text{LDFA}$ and $\text{JLO}=\text{MPTA}+\text{LDFA}$ give the CPAK morphologies defined by MacDessi et. al.\cite{cpak-paper}.
+For the input space $X$, pre-operative MPTA and LDFA angles are combined into vectors $x_i=[\text{preopMPTA}_i, \text{preopLDFA}_i]$
+where $i$ denotes the REDCAP ID number. The same is done for the output space $Y: y_i=[plannedMPTA_i, plannedLDFA_i]$.
+To train and evaluate the model, we split the input and output data into testing, training and validation sets of sizes 30\%, 66.5\% and 3.5\% respectively.
+Each split contains an equal number of pre-op and planned values, linked by case through the REDCAP ID.
+	Next, two normalizers are defined: $\text{norm}_Y$ and $\text{norm}_Y$.
+They use the min max scaler algorithm defined in the scikit-learn library \cite{scikit-learn} to normalize the values of the input and output
+by scaling them within the range [-1, 1].
+$\text{norm}_x$ is fitted to the training subset of $X$, $norm_Y$ is fitted to the training subset of $Y$.
+After fitting, the normalizer coefficients are saved so that individual [MPTA, LDFA] samples can be normalized and de-normalized deterministically.
 
-For the analysis, the pre-operative aHKA values were standardized using either the standard scaler method or min-max scaler method.
-Then, the pre-operative alignments were clustered using the K-means clustering algorithm
-(see \href{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html#sklearn.cluster.KMeans}
-{\underline{Sklearn K-Means Clustering}}) (Figure \ref{fig:clusters}.)\\
+Training
+	
+	For the NYU method a multilayer perceptron (MLP) model, also known as a neural network, is trained to determine the regression line of best fit \cite{mlp-paper}.
+An MLP architecture for the model was chosen based on the following factors: the size of the dataset, the input dimensions and the output dimensions.
+Since the size of the dataset is small (626 cases), a more robust deep learning architecture is not an option.
+The MLP architecture we used had three hidden layers of sizes 16, 8 and 4 [mlp\_diagram],
+making it large enough to learn feature representations of the input and small enough to converge on a small sample size \cite{deep-learning-paper}.
+We used stochastic gradient descent as the optimizer, set the random seed to 42, and used hyperbolic tangent as our activation function since its range (-1,1)
+fits well within the range of the normalizer [-1,1] \cite{sgd-paper, mlp-paper}.
+Other hyperparameters are set to their default value as per the scikit-learn documentation \cite{sklearn-sgd, adaptive-lr, scikit-learn, momentum-paper}.
+The input dimension (2) and output dimension (2) disqualified the option of using traditional support vector machines for this model.
+Multi-output SVM regressors are an option, however these work by combining two separate regressors \cite{svm-paper},
+one to predict MPTA and one to predict LDFA, and would therefore blind to the relationship between pre-operative and post-operative aHKA values. 
 
-\section{Results} % list what I looked at and what the results were
+Evaluation
 
-Several models were trained to predict the optimal post-resection aHKA value based on the pre-operative aHKA value:
-\begin{itemize}
-	\item A linear regression model (Figure \ref{fig:degree_3_polynomial_regression})
-	\item A support vector machine model (Figure \ref{fig:svm_regression})
-	\item A multi-layer perceptron model (Figure \ref{fig:neural_network_regression})
-\end{itemize}
+	To measure the accuracy of the model we calculated and compared the aHKA values for pre-operative and planned knee alignments.
+To do so, we first took the following difference between non-normalized MPTA and LDFA patterns within the testing sets: 
+$X_\text{test}$, $Y_\text{test}$: 
+$$X_\text{test, aHKA}=\{\text{MPTA} - \text{LDFA} | [\text{MPTA}, \text{LDFA}] \in X_\text{test}\}$$
+$$Y_\text{test, aHKA}=\{\text{MPTA} - \text{LDFA} | [\text{MPTA}, \text{LDFA}] \in Y_\text{test}\}$$
+Then the model predicts planned LDFA and MPTA values in the testing set ($Y_\text{pred}$). 
+The model predicts the normalized the input ($\text{norm}_x(x_i)$), running the normalized input through the model ($\text{predict}(\text{norm}_x(x_i))$),
+and de-normalizing the predicted planned alignmnets ($\text{norm}_y^{-1}$):
+$$Y_\text{pred}=\{\text{norm}_y^{-1}(\text{predict}(\text{norm}_x(x_i))) | x_i \in X_\text{test}\}$$
+To compare our predictions with $Y_\text{test, aHKA}$, we evaluate $Y_\text{pred, aHKA}$ in the same manner as $Y_\text{test, aHKA}$: 
+$$Y_\text{pred, aHKA}=\{\text{MPTA} - \text{LDFA} | [\text{MPTA}, \text{LDFA}] \in Y_\text{test}\}$$
+Since the testing set is split from the training set the model has never seen the patterns in $X_\text{test}$ or $Y_\text{test}$ before.
+By doing so, we get a preliminary understanding of how this model may perform in the field.
+As the final step, we take the mean squared error between the targets $Y_\text{test, aHKA}$ and the predictions $Y_\text{pred, aHKA}$ to evaluate the model's accuracy.
 
-\begin{figure}[ht]
-	\caption{Regression Models}
-	\begin{subfigure}{.32\textwidth}
-		\includegraphics[width=\textwidth]{degree_3_polynomial_regression.png}
-		\caption{}
-		\label{fig:degree_3_polynomial_regression}
-	\end{subfigure}
-	\begin{subfigure}{.32\textwidth}
-		\includegraphics[width=\textwidth]{svm_regression.png}
-		\caption{}
-		\label{fig:svm_regression}
-	\end{subfigure}
-	\begin{subfigure}{.32\textwidth}
-		\includegraphics[width=\textwidth]{neural_network_regression.png}
-		\caption{}
-		\label{fig:neural_network_regression}
-	\end{subfigure}
-	\caption*{
-		\footnotesize
-		Regression models trained using Polynomial, SVM, and Neural Network regression training algorithms, respectively.
-		The error is the mean squared distance from the testing set (black).
-		The regression is trained on the training set (blue)
-	}
-	\label{fig:regression_models}
-\end{figure}
+	
+\section{Results}
 
-To train the polynomail regression model \ref{fig:degree_3_polynomial_regression}, input features are transformed using a polynomial transformation of degree 3 
-(see \href{https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html}{\underline{Sklearn Polynomial Features}}).
-Afterwards, the model is trained using a linear regression algorithm 
-(see \href{https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html}{\underline{Sklearn Linear Regression}}).
+Training
+	The model converged early, halting after training for \epochs with a batch size of \batchsize patterns [loss\_curve].
+After about \convergence epochs, the mean squared error between normalized input/target patterns begins to converge.
+The model takes less than 1 minute to converge with no GPU, however it is important to note this is with a small training set of 417 patterns.
+Nonetheless, with the simple feed-forward neural net architecture chosen for this model, it is expected that the model will train relatively quickly. 
 
-For the support vector regressor \ref{fig:neural_network_regression} the pre and post-operative aHKA values were standardized using the standard scaler method.
-Then, the model is trained using a nu support vector regression algorithm
-(see \href{https://scikit-learn.org/stable/modules/generated/sklearn.svm.NuSVR.html#sklearn.svm.NuSVR}{\underline{Sklearn Support Vector Machine}}).
+Shape
+	The regression this model produces is in-line with the hypothesized change in pre-op to planned aHKA.
+In [data-vis], the pre-operative and post-operative aHKA and JLO values from the initial dataset are shown.
+The pre-operative values were more varied than their planned counterparts and the vertical and horizontal bars separate the different knee alignment morphologies \cite{cpak-paper}.
+Splitting the pre-operative values by aHKA into varus, valgus and aligned groups, we can view the average change for each group from pre-op to planning stage [data-vis-changes].
+For each group, the JLO tends to move in the same direction. More interestingly, however, is the way aHKA changes by group: 
+on average, varus morphologies tend to stay varus and aligned morphologies tend to stay aligned but valgus morphologies are planned to be corrected to aligned morphologies.
+Looking at the regression produced from the model [regression], we see the same pattern.
+Blue dots represent the training and validation set while block dots represent the testing set.
+The middle-left square is hardly intersected by the regression, indicating the model rarely predicts aligned morphologies from varus morphologies.
+The middle-right square is intersected by the regression, however, indicating the model sometimes predicts aligned morephologies from valgus morphologies.
 
-For the deep learning model \ref{fig:svm_regression} pre and post-operative aHKA values were normalized using the min-max scaler method with feature range $[-1, 1]$ in the pretraining step.
-Then, the model is trained using a multi-layer perceptron (MLP) algorithm 
-(see \href{https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html}{\underline{Sklearn Multi-layer Perceptrion}}).
+Accuracy
+	Evaluative statistics demonstrate the NYU method for planning knee morphologies is more accurate than making predictions about the mean
+(RMSE \mse; Nash Sutcliffe \ns) \cite{goodness-of-fit}. 
+As the regression [regression] moves towards more densely populated regions of the scatter plot, the line of best straightens out.
+This demonstrates how the model successfully avoids overfitting so long as there are enough examples in the dataset.
+
+Moving Forward
+	More work needs to be done to evaluate the NYU methods usefulness for planning robotic TKR in the field. Included in this study is a codebase from which the model can be trained if suppliad appropriate data. With a pre-trained model, the NYU method is accessible through a graphical user interface [gui]. The GUI is brought up by running the gui.py script with a pre-trained model in the appropriate folder. With it, the NYU method can be utilized without any code.
 
 \medskip
 

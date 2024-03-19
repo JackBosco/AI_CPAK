@@ -107,8 +107,8 @@ def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_norma
 	plt.xlabel('Pre-op aHKA')
 	plt.ylabel('Planned aHKA')
 	plt.legend()
-	#plt.savefig('writeup_tex/'+f'{model_name}'.replace(' ','_') +'_regression.png')
-	#plt.show()
+	plt.savefig('writeup_tex/'+f'{model_name}'.replace(' ','_') +'_regression.png')
+	plt.show()
 	plt.close()
 
 	
