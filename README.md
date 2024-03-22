@@ -28,11 +28,11 @@ However, if you have the `mako_data.xlsx` file, drop that in `raw`.
    ```
    python3 data_viz.py
    ```
-5. Create a data clustering example (optional command line options are `nclusters <int>`, `bmi`, `age`, `FTR` for femoral transverse rotation, `sex`):
+<!-- 5. Create a data clustering example (optional command line options are `nclusters <int>`, `bmi`, `age`, `FTR` for femoral transverse rotation, `sex`):
    ```
    python3 make_clusters.py
-   ```
-5. Create and visualize a regression model for planned aHKA
+   ``` -->
+5. Create and visualize a regression model for planning postop aHKA alignments
    ```
    python3 regression.py
    ```
@@ -42,6 +42,11 @@ However, if you have the `mako_data.xlsx` file, drop that in `raw`.
 Configure the date file locations in `config.py`:
  - `raw_path` is the path to the raw data
  - `treated_path` is the path to the treated data
+ - `norm_path` is the path to the input normalizer
+ - `de_norm_path` is the path to the output normalizer
+ - `model_path` is the path to the pre-trained model
 
-Of course, if the files are not there the program will just crash.
-I also cannot privide the files in this repo due to compliance reasons, though please reach out to me if you would like to run this on your own dataset.
+## `regression.py` is the only file that will run if you don't supply the de-anonymized patient data yourself
+I cannot privide the files in this repo due to compliance reasons, but please reach out to me if you would like to run this on your own dataset.
+
+linkedin: [linkedin.com/in/JackBosco](https://linkedin.com/in/JackBosco).
