@@ -4,6 +4,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+# setting plot display parameters
+import scienceplots
+plt.style.use('science')
+plt.rcParams['figure.figsize'] = (7,3)
+plt.rcParams['figure.dpi'] = 100
+
+
+
 try:
 	f = open(config.treated_path, 'r')
 	f.close()
@@ -69,8 +77,8 @@ ax2.annotate(xy=avg_preop_valgus, xytext=avg_postop_valgus, arrowprops={'arrowst
 x, y = ax1.get_xlim(), ax1.get_ylim()
 ax2.set_ylim(ymin=y[0], ymax=y[1])
 ax2.set_xlim(xmin=x[0], xmax=x[1])
-fig1.set_size_inches(5,5)
-fig2.set_size_inches(5,5)
+#fig1.set_size_inches(5,5)
+#fig2.set_size_inches(5,5)
 
 #plot the lines
 for a in [ax1, ax2]:

@@ -14,6 +14,12 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import GridSearchCV
 import pickle
 import numpy as np
+import scienceplots
+
+# setting plot display parameters
+plt.style.use('science')
+plt.rcParams['figure.figsize'] = (10,6)
+plt.rcParams['figure.dpi'] = 300
 
 # read in the data, split into X and y
 df = pd.read_csv(config.treated_path, index_col=0)
@@ -42,6 +48,24 @@ y_norm = out_normalizer.transform(y) # both
 pickle.dump(normalizer, open(config.norm_path, 'wb'))
 pickle.dump(out_normalizer, open(config.de_norm_path, 'wb'))
 
+
+#print descriptive statistics of the normalized data
+def print_norms():
+	s = [
+		(X_train_normalized, "Normalized Pre-op Training Set")
+		, (X_test_normalized, "Normalized Pre-op Testing Set")
+		, (X_normalized, "Normalized Entire Pre-op Set")
+		, (y_train_norm, "Normalized planned Training Set")
+		, (y_test_norm, "Normalized planned Testing Set")
+		, (y_norm, "Normalized Entire planned Set")
+		]
+	def helper(data, msg):
+		x_df = pd.DataFrame(data, columns=["MPTA","LDFA"])
+		print('\n'+msg)
+		print(x_df.describe())
+	for d, m in s:
+		helper(d,m)
+print_norms()
 
 def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_normalizer):
 	"""
@@ -129,14 +153,14 @@ def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_norma
 
 	# plot the error
 	plt.fill_between(dt1['x'], dt1['y_pred']+error, dt1['y_pred']-error, color='red', alpha=.2, label=f'Error: += {error:.2f}°')
-	plt.fill_between(dt1['x'], (dt1['y_pred']+.33*error), (dt1['y_pred']-.33*error), color='red', alpha=.4, label='33% Error')
+	#plt.fill_between(dt1['x'], (dt1['y_pred']+.33*error), (dt1['y_pred']-.33*error), color='red', alpha=.4, label='33% Error')
 	
 	# plot the rest
-	plt.title(f'{model_name} Model Prediction for Planned aHKA from Pre-op aHKA')
-	plt.xlabel('Pre-op aHKA')
-	plt.ylabel('Planned aHKA')
+	plt.title(f'NYU Method Prediction of Planned aHKA from Preoperative aHKA')
+	plt.xlabel('Preoperative aHKA (degrees)')
+	plt.ylabel('Planned aHKA (degrees)')
 	plt.legend()
-	# plt.savefig('writeup_tex/'+f'{model_name}'.replace(' ','_') +'_regression.png') #this can cause problems
+	# plt.savefig('Figure 3')#'writeup_tex/'+f'{model_name}'.replace(' ','_') +'_regression.png') #this can cause problems
 	plt.show()
 	plt.close()
 
@@ -226,6 +250,7 @@ def do_mlp(train=False):
 	plt.xlabel("Training Epoch")
 	plt.ylabel("Mean Squared Error")
 	plt.tight_layout()
+	# plt.savefig("Figure 2")
 	plt.show()
 	plt.close()
 
