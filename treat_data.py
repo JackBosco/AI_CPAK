@@ -142,15 +142,10 @@ sex = pd.get_dummies(df.loc[:, 'Sex (1=female,0=male)'], prefix='sex', dtype=flo
 out = out.join(sex, how='inner')
 
 #================ add preop native flection ======================
-# print(out.shape)
-# flexion_data = pd.read_csv(config.raw_flx_path, index_col=0)
-# out = out.join(flexion_data.loc[:, 'Preop Native Flexion (Flexion=+, Extension=-)'], how='inner')
-# out.rename(axis=1, mapper={'Preop Native Flexion (Flexion=+, Extension=-)':'Preop Flexion'})
-# print(out.shape)
-"""
-DONT DO THIS: 
-the flexion data unioned with the other data is so sparse that we lose a lot% of the dataset
-"""
+
+flexion_data = pd.read_excel(config.raw_flx_path, index_col=0)
+out = out.join(flexion_data.loc[:, 'Femoral Rotation: PCA (External= +, Internal= -) (degrees)'], how='inner')
+out.rename(axis=1, mapper={'Femoral Rotation: PCA (External= +, Internal= -) (degrees)':'Preop Femoral Rotation'}, inplace=True)
 
 #================ save to csv ======================
 

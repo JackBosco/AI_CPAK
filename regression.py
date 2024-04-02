@@ -65,7 +65,7 @@ def print_norms():
 		print(x_df.describe())
 	for d, m in s:
 		helper(d,m)
-print_norms()
+#print_norms()
 
 def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_normalizer):
 	"""
