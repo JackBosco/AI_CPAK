@@ -11,7 +11,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.neural_network import MLPRegressor
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, KFold
 import pickle
 import numpy as np
 import scienceplots
@@ -106,7 +106,6 @@ def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_norma
 	X1 = X.iloc[:, 0] - X.iloc[:, 1]
 	y_pred1 = y_pred.iloc[:, 0] - y_pred.iloc[:, 1]
 	y_pred_train1 = y_pred_train.iloc[:, 0] - y_pred_train.iloc[:, 1]
-	#y_pred_all1 = y_pred_all.iloc[:, 0] - y_pred_all.iloc[:, 1]
 	y1 = y.iloc[:, 0] - y.iloc[:, 1]
 
 	# get the mean squared error and print
@@ -196,7 +195,7 @@ def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_norma
 
 	
 # feed-forward neural network model
-def do_mlp(train=False):
+def do_mlp(train=False, kfolds=None, load=False):
 	"""
 	@params 
 	train: whether or not you want to train a fresh model. If there is no pretrained model available, it will train anyways
@@ -225,15 +224,41 @@ def do_mlp(train=False):
 		else:
 			st = config.model_path
 		pickle.dump(best, open(st, 'wb'))
-	else:
+		test_mlp(best)
+	elif kfolds:
+		folds = KFold(n_splits=kfolds, shuffle=True, random_state=42)
+		splits = folds.split(X_normalized, y_norm)
+		errs, r2s = [], []
+		for i, (train, test) in enumerate(splits):
+			print('=='*20)
+			print(f"Training fold {i+1}, test size: {len(test)}, train size: {len(train)}")
+			X_train, X_test = X_normalized[train], X_normalized[test]
+			y_train, y_test = y_norm[train], y_norm[test]
+			mlp = MLPRegressor(hidden_layer_sizes=(16, 8, 4), max_iter=2000, solver='sgd', activation='tanh', batch_size=4, learning_rate='adaptive', early_stopping=False, validation_fraction=0.05, random_state=42)
+			mlp.fit(X_train, y_train)
+			y_pred = mlp.predict(X_test)
+			y_pred_denorm, y_denorm = out_normalizer.inverse_transform(y_pred), out_normalizer.inverse_transform(y_test)
+			error = mean_squared_error(y_denorm, y_pred_denorm)
+			r2=mlp.score(X_test, y_test)
+			print(f"Mean Squared Error for testing data: {error}")
+			print(f"R2 Score for testing data: {r2}")
+			print('=='*20)
+			errs.append(error)
+			r2s.append(r2)
+		print("*"*10, "Results", "*"*10)
+		print(f"Average Mean Squared Error: {np.mean(errs)}")
+		print(f"Average R2 Score: {np.mean(r2s)}")
+	elif load:
 		try:
 			f = open(config.model_path, 'rb')
 			best=pickle.load(f)
+			test_mlp(best)
 		except:
 			print(f"Couldn't find pretrained model path {config.model_path}, training anyways")
 			do_mlp(train=True)
 			exit()
-	
+
+def test_mlp(best):
 	# get the mean squared error, mean absolute error, and root mean squared error over time
 	loss = np.array(best.loss_curve_)
 	epoch = np.arange(1, loss.shape[0]+1, 1)
@@ -262,4 +287,4 @@ def do_mlp(train=False):
 
 
 if __name__ == '__main__':
-	do_mlp(train=False) # training takes a long time to train (R.I.P. YOUR CPU)
+	do_mlp(train=False, load=True) # training takes a long time to train (R.I.P. YOUR CPU)
