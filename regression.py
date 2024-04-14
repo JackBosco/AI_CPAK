@@ -18,8 +18,8 @@ import scienceplots
 
 # setting plot display parameters
 plt.style.use('science')
-plt.rcParams['figure.figsize'] = (10,6)
-plt.rcParams['figure.dpi'] = 300
+plt.rcParams['figure.figsize'] = (7,4)
+plt.rcParams['figure.dpi'] = 200
 
 # read in the data, split into X and y
 df = pd.read_csv(config.treated_path, index_col=0)
@@ -151,7 +151,7 @@ def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_norma
 	plt.axhline(y=2)
 
 	# plot the error
-	plt.fill_between(dt1['x'], dt1['y_pred']+error, dt1['y_pred']-error, color='red', alpha=.2, label=f'Error: += {error:.2f}°')
+	plt.fill_between(dt1['x'], dt1['y_pred']+error, dt1['y_pred']-error, color='red', alpha=.2, label=f'Error: ± {error:.2f}°')
 	#plt.fill_between(dt1['x'], (dt1['y_pred']+.33*error), (dt1['y_pred']-.33*error), color='red', alpha=.4, label='33% Error')
 	
 	# plot the rest
