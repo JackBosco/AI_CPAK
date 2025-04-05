@@ -4,18 +4,41 @@
 
 ---
 
-### What is the Goal?
+
+## What is the Goal?
 
 Using machine learning techniques such as feature selection and data clustering, we hope to develop our understanding of knee alignment morphologies.
 
-### Where is the data?
+## How do I use this?
+
+[./screenshot.png](screenshot of gui)
+
+If you just want to launch the graphical user interface (GUI), follow the 3-step guide below. Requires `python3.10`+.
+
+1. `clone` and `cd` to the project directory
+   ```
+   git clone https://github.com/JackBosco/AI_CPAK/ && cd AI_CPAK
+   ```
+2. Make sure you have the right dependencies by running the command below. You only need to do this once.
+   ```
+   pip3 install -r requirements.txt
+   ```
+3. Launch the GUI
+   ```
+   python3 gui.py
+   ```
+
+## Where is the data?
 
 Due to compliance reasons, I cannot upload the datasheet to GitHub.
 However, if you have the `mako_data.xlsx` file, drop that in `raw`.
 
-### How do I run the project?
+### I have my own data. How do I reproduce the paper?
 
-1. `cd` to the project directory
+1. `clone` and `cd` to the project directory
+   ```
+   git clone https://github.com/JackBosco/AI_CPAK/ && cd AI_CPAK
+   ```
 2. Make sure you have the right dependencies by running the command below. You only need to do this once.
    ```
    pip3 install -r requirements.txt
