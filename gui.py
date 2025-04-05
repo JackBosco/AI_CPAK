@@ -5,6 +5,7 @@ breezypythongui Author: Ken Lambert
 GUI Documentation: https://lambertk.academic.wlu.edu/breezypythongui/
 """
 
+from tkinter import PhotoImage
 from breezypythongui import EasyFrame
 import pickle
 import pandas as pd
@@ -15,7 +16,8 @@ class NYUMethodGUI(EasyFrame):
 	normalizing input MPTA and LDFA"""
 
 	def __init__(self):
-		EasyFrame.__init__(self)
+		EasyFrame.__init__(self, title="AI CPAK Tool")
+		self.master.wm_iconphoto(True, PhotoImage(file='logo.png', format='PNG'))
 
 		# Label and field for inputs
 		self.addLabel(text = "Pre-op MPTA",

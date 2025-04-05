@@ -11,7 +11,7 @@ Using machine learning techniques such as feature selection and data clustering,
 
 ## How do I use this?
 
-[./screenshot.png](screenshot of gui)
+![./screenshot.png](screenshot.png)
 
 If you just want to launch the graphical user interface (GUI), follow the 3-step guide below. Requires `python3.10`+.
 
