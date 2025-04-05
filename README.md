@@ -69,7 +69,7 @@ Configure the date file locations in `config.py`:
  - `de_norm_path` is the path to the output normalizer
  - `model_path` is the path to the pre-trained model
 
-## `regression.py` is the only file that will run if you don't supply the de-anonymized patient data yourself
+## `gui.py` is the only file that will run if you don't supply the de-anonymized patient data yourself
 I cannot privide the files in this repo due to compliance reasons, but please reach out to me if you would like to run this on your own dataset.
 
 linkedin: [linkedin.com/in/JackBosco](https://linkedin.com/in/JackBosco).
