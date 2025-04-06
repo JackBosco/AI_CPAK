@@ -15,3 +15,9 @@ related_works/**/.pdf
 !data/pretrained/normalizer.h5
 !data/pretrained/denormalizer.h5
 !data/pretrained/mlp.h5
+
+utils
+gui.py
+data_viz.py
+regression.py
+treat_data.py
