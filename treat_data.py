@@ -143,9 +143,13 @@ out = out.join(sex, how='inner')
 
 #================ add preop native flection ======================
 
-flexion_data = pd.read_excel(config.raw_flx_path, index_col=0)
-out = out.join(flexion_data.loc[:, 'Femoral Rotation: PCA (External= +, Internal= -) (degrees)'], how='inner')
-out.rename(axis=1, mapper={'Femoral Rotation: PCA (External= +, Internal= -) (degrees)':'Preop Femoral Rotation'}, inplace=True)
+try:
+	flexion_data = pd.read_excel(config.raw_flx_path, index_col=0)
+	out = out.join(flexion_data.loc[:, 'Femoral Rotation: PCA (External= +, Internal= -) (degrees)'], how='inner')
+	out.rename(axis=1, mapper={'Femoral Rotation: PCA (External= +, Internal= -) (degrees)':'Preop Femoral Rotation'}, inplace=True)
+except:
+	print(FileNotFoundError('Couldn\'t find', config.raw_flx_path))
+
 
 #================ save to csv ======================
 
