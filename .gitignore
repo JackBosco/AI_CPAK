@@ -167,3 +167,5 @@ ui.py
 #old stuff
 ._old/
 __pycache__
+_.venv
+uv.lock
