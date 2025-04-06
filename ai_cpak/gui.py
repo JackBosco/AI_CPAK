@@ -5,8 +5,9 @@ breezypythongui Author: Ken Lambert
 GUI Documentation: https://lambertk.academic.wlu.edu/breezypythongui/
 """
 
+from sklearn.neural_network import MLPRegressor
 from tkinter import PhotoImage
-from .utils.breezypythongui import EasyFrame
+from utils.breezypythongui import EasyFrame
 import pickle
 import pandas as pd
 import config
@@ -62,12 +63,14 @@ class NYUMethodGUI(EasyFrame):
 
 		# data normalizer
 		self.normalizer=pickle.load(open(config.norm_path, 'rb'))
+		self.normalizer.feature_names_in_ = ["Pre-op mpta", "Pre-op ldfa"]
 		self.denormalizer=pickle.load(open(config.de_norm_path, 'rb'))
 
 		# pre-trained model
-		self.model=pickle.load(open(config.model_path, 'rb'))
+		self.model : MLPRegressor = pickle.load(open(config.model_path, 'rb'))
 
 		# dataframe for compatability with scikit-learn
+		self.model.feature_names_in_ = None
 		self.data=pd.DataFrame(data={'Pre-op mpta':[], 'Pre-op ldfa':[]}, dtype=float)
 
 	def predict(self):

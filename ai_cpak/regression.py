@@ -16,37 +16,47 @@ import pickle
 import numpy as np
 import scienceplots
 
-# setting plot display parameters
-plt.style.use('science')
-plt.rcParams['figure.figsize'] = (7,4)
-plt.rcParams['figure.dpi'] = 200
+global X, X_train, X_test, X_normalized, X_train_normalized, X_test_normalized
+global y, y_train, y_test, y_norm, y_train_norm, y_test_norm
+global normalizer, out_normalizer
+global df
 
-# read in the data, split into X and y
-df = pd.read_csv(config.treated_path, index_col=0)
-X = df.loc[:, ['Pre-op mpta', 'Pre-op ldfa']] #1, 6, 7, 8]] # preop hka, preop jlo, age, bmi, femoral transverse rotation
-y = df.loc[:, ['Planned MPTA', 'Planned LDFA']] # planned hka
+def load_and_norm():
+	global X, X_train, X_test, X_normalized, X_train_normalized, X_test_normalized
+	global y, y_train, y_test, y_norm, y_train_norm, y_test_norm
+	global normalizer, out_normalizer
+	global df
+	# setting plot display parameters
+	plt.style.use('science')
+	plt.rcParams['figure.figsize'] = (7,4)
+	plt.rcParams['figure.dpi'] = 200
 
-# split into training and testing data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42) # 75% training, 25% testing, 42 is the answer to everything
+	# read in the data, split into X and y
+	df = pd.read_csv(config.treated_path, index_col=0)
+	df.rename(columns={'Pre-op mpta': 'Pre_op_mpta', 'Pre-op ldfa': 'Pre_op_ldfa'}, inplace=True)
+	X = df.loc[:, ['Pre_op_mpta', 'Pre_op_ldfa']] #1, 6, 7, 8]] # preop hka, preop jlo, age, bmi, femoral transverse rotation
+	y = df.loc[:, ['Planned MPTA', 'Planned LDFA']] # planned hka
 
+	# split into training and testing data
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.0001, random_state=42) # 75% training, 25% testing, 42 is the answer to everything
 
-# initializer normalizer with min-max scaling
-normalizer = MinMaxScaler(feature_range=(-1, 1)) # for inputs
-out_normalizer = MinMaxScaler(feature_range=(-1, 1)) # for targets
+	# initializer normalizer with min-max scaling
+	normalizer = MinMaxScaler(feature_range=(-1, 1)) # for inputs
+	out_normalizer = MinMaxScaler(feature_range=(-1, 1)) # for targets
 
-# fit normalizer to training input data
-X_train_normalized = normalizer.fit_transform(X_train)
-X_test_normalized = normalizer.transform(X_test) # normalized testing input data
-X_normalized = normalizer.transform(X) # normalizing all input data
+	# fit normalizer to training input data
+	X_normalized = normalizer.fit_transform(X) # normalizing all input data
+	X_train_normalized = normalizer.transform(X_train)
+	X_test_normalized = normalizer.transform(X_test) # normalized testing input data
 
-# normalize the output data with min-max scaling
-y_train_norm = out_normalizer.fit_transform(y_train) # training
-y_test_norm = out_normalizer.transform(y_test) # testing
-y_norm = out_normalizer.transform(y) # both
+	# normalize the output data with min-max scaling
+	y_norm = out_normalizer.fit_transform(y) # both
+	y_train_norm = out_normalizer.transform(y_train) # training
+	y_test_norm = out_normalizer.transform(y_test) # testing
 
-# save the normalizers
-pickle.dump(normalizer, open(config.norm_path, 'wb'))
-pickle.dump(out_normalizer, open(config.de_norm_path, 'wb'))
+	# save the normalizers
+	pickle.dump(normalizer, open(config.norm_path, 'wb'))
+	pickle.dump(out_normalizer, open(config.de_norm_path, 'wb'))
 
 
 #print descriptive statistics of the normalized data
@@ -67,7 +77,7 @@ def print_norms():
 		helper(d,m)
 #print_norms()
 
-def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_normalizer):
+def test_model(fit_model, model_name, testset, trainset, x_data, norm1=None):
 	"""
 	@params
 	fit_model: the pre-fitted sklearn model
@@ -77,7 +87,8 @@ def test_model(fit_model, model_name, testset, trainset, x_data, norm1=out_norma
 	x_data: the entire normalized entire dataset. Passed as a numpy array, but is in same order by redcap id
 	"""
 	
-	# this is some serious spaghettic code, let me explain:
+	if not norm1:
+		norm1 = out_normalizer
 	
 	#we predict results from the normalized data, then denormalize the output. This is the testing set.
 	y_pred = fit_model.predict(testset[0])
@@ -287,4 +298,5 @@ def test_mlp(best):
 
 
 if __name__ == '__main__':
+	load_and_norm()
 	do_mlp(train=False, load=True) # training takes a long time to train (R.I.P. YOUR CPU)

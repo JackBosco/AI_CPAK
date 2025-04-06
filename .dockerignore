@@ -1,0 +1,17 @@
+.venv
+._venv
+_.venv
+
+**/raw/*
+!**/raw/README.md
+**/treated/*
+!**/treated/README.md
+related_works/**/.pdf
+.vscode/
+.DS_Store
+
+**/*.h5
+
+!data/pretrained/normalizer.h5
+!data/pretrained/denormalizer.h5
+!data/pretrained/mlp.h5
