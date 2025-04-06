@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = [
     { name="Jack Bosco", email="joseph.bosco+aicpak@gmail.com"}
 ]
-description = "Add your description here"
+description = "NYU Langone AI for Coronal Plane Alignment of the Knee (CPAK) Prediction"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -35,3 +35,6 @@ dependencies = [
 dev = [
     "ipykernel>=6.29.5",
 ]
+
+[project.urls]
+Homepage = "https://github.com/JackBosco/AI_CPAK"
