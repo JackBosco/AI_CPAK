@@ -12,9 +12,9 @@ related_works/**/.pdf
 
 **/*.h5
 
-!data/pretrained/normalizer.h5
-!data/pretrained/denormalizer.h5
-!data/pretrained/mlp.h5
+!**/pretrained/normalizer.h5
+!**/pretrained/denormalizer.h5
+!**/pretrained/mlp.h5
 
 utils
 gui.py

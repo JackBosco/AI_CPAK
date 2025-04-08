@@ -1,7 +1,0 @@
-raw_path="data/raw/mako_data.xlsx"
-treated_path="data/treated/morphologies.csv"
-raw_flx_path="data/raw/pca-3.12.24.xlsx"
-norm_path="data/pretrained/normalizer.h5"
-de_norm_path="data/pretrained/denormalizer.h5"
-model_path="data/pretrained/mlp.h5"
-pretrained_path="data/pretrained/"

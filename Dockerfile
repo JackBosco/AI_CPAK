@@ -30,7 +30,7 @@ FROM public.ecr.aws/lambda/python:3.10
 COPY --from=builder ${LAMBDA_TASK_ROOT} ${LAMBDA_TASK_ROOT}
 
 # Copy the application code.
-COPY ./ai_cpak ${LAMBDA_TASK_ROOT}/ai_cpak
+COPY ./app ${LAMBDA_TASK_ROOT}/app
 
 # Set the AWS Lambda handler.
 CMD ["app.main.handler"]

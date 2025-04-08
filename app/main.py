@@ -44,7 +44,7 @@ def predict(request: PredictRequest) -> PredictResponse:
 
 
 @app.get("/", response_class=HTMLResponse)
-def pred_gui():
+def pred_gui() -> str:
 	return """
 	<!DOCTYPE html>
 	<html>
@@ -95,7 +95,6 @@ def pred_gui():
 	</body>
 	</html>
 	"""
-
 
 
 @app.post("/api/predict")
